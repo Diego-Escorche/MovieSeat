@@ -4,11 +4,30 @@
     "eslint": "^9.19.0",
     "express": "4.21.2",
     "globals": "^15.14.0",
+    "movie-reserve": "file:",
     "picocolors": "^1.1.1",
     "prettier": "^3.4.2"
   },
   "devDependencies": {
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.3"
-  }
+  },
+  "name": "movie-reserve",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Diego-Escorche/Movie-Reserve.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Diego-Escorche/Movie-Reserve/issues"
+  },
+  "homepage": "https://github.com/Diego-Escorche/Movie-Reserve#readme"
 }
