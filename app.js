@@ -11,8 +11,6 @@ const app = express();
 app.use(express.json());
 app.disable('x-powered-by');
 
-const PORT = process.env.PORT || 1234;
-
 // Common Methods for CORS: GET/HEAD/POST
 // Complex Methods for CORS: PUT/PATCH/DELETE -> They use CORS PRE-Flight or Options
 const ACCEPTED_ORIGINS = [
@@ -20,12 +18,14 @@ const ACCEPTED_ORIGINS = [
   'http://localhost:1234',
   'https://movies.com',
 ];
+
 // Movies by genre & by default all the movies available
 app.get('/movies', (req, res) => {
   const origin = req.header('origin');
+
   // When the request is from the same origin, it isn't sent on the request header.
   if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
-    // res.header('Access-Control-Allow-Origin', '*') => Allow Access to every Port. '*' means all available ports.
+    // res.header('Access-Control-Allow-Origin', '*') => Allow Access to every Port (Not recommended, it can cause a security breach). '*' means all available ports.
     res.header('Access-Control-Allow-Origin', origin);
   }
 
@@ -121,6 +121,9 @@ app.options('/movies/:id', (req, res) => {
   }
   res.send();
 });
+
+const PORT = process.env.PORT ?? 1234;
+
 app.listen(PORT, () => {
   console.log(`listening on port: http://localhost:${PORT}`);
 });
