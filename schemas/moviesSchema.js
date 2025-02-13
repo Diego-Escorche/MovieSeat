@@ -1,4 +1,4 @@
-const z = require('zod'); // To validate the JSON data
+import { z } from 'zod'; // To validate the JSON data
 
 // Validate the data with a schema.
 const movieSchema = z.object({

@@ -1,14 +1,15 @@
-const express = require('express');
-const crypto = require('crypto'); // For unique ID generation
+import express, { json } from 'express';
+import { randomUUID } from 'crypto'; // For unique ID generation
 
+import { validateMovie, validatePartialMovie } from './schemas/moviesSchema.js';
+
+// Read a JSON with ESModules
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
 const moviesJSON = require('./movies.json');
-const {
-  validateMovie,
-  validatePartialMovie,
-} = require('./schemas/moviesSchema');
 
 const app = express();
-app.use(express.json());
+app.use(json());
 app.disable('x-powered-by');
 
 // Common Methods for CORS: GET/HEAD/POST
@@ -44,7 +45,7 @@ app.get('/movies', (req, res) => {
 // Movies by Id
 app.get('/movies/:id', (req, res) => {
   const { id } = req.params;
-  const movie = moviesJSON.find((movie) => movie.id === id);
+  const movie = moviesJSON.moviesJSON.find((movie) => movie.id === id);
 
   if (movie) {
     return res.json(movie);
@@ -62,7 +63,7 @@ app.post('/movies', (req, res) => {
   }
 
   const newMovie = {
-    id: crypto.randomUUID(), // Creates the Universal Unique ID
+    id: randomUUID(), // Creates the Universal Unique ID
     ...result.data, // Gets the validated data
   };
 
