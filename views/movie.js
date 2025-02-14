@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { readJSON } from '../utils.js';
 const movies = readJSON('../movies.json');
 
@@ -10,8 +11,27 @@ export class MovieModel {
     }
     return movies;
   }
+
   static async getById({ id }) {
     const movie = movies.find((movie) => movie.id === id);
     return movie;
+  }
+
+  static async create(input) {
+    const newMovie = {
+      id: randomUUID(),
+      ...input,
+    };
+
+    movies.push(newMovie);
+    return newMovie;
+  }
+
+  static async delete({ id }) {
+    const movieIndex = movies.find((m) => m.id === id);
+    if (movieIndex === -1) return false;
+    movies.splice(movieIndex, 1);
+
+    return true;
   }
 }
