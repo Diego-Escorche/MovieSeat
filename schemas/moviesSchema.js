@@ -33,15 +33,10 @@ const movieSchema = z.object({
   ),
 });
 
-function validateMovie(object) {
+export function validateMovie(object) {
   return movieSchema.safeParse(object);
 }
 
-function validatePartialMovie(object) {
+export function validatePartialMovie(object) {
   return movieSchema.partial().safeParse(object); // The partial() makes the properties optional when it validates them.
 }
-
-module.exports = {
-  validateMovie,
-  validatePartialMovie,
-};

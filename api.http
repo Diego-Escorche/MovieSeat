@@ -2,7 +2,7 @@
 GET http://localhost:1234/movies
 
 ### Get movies by id.
-GET http://localhost:1234/movies/dwdacdd0fad-a94c-4810-8acc-5f108d3b18c3
+GET http://localhost:1234/movies/dcdd0fad-a94c-4810-8acc-5f108d3b18c3
 
 ### Get all the movies from the same genre.
 GET http://localhost:1234/movies?genre=ACTION
@@ -23,3 +23,6 @@ Content-Type: application/json
 {
     "year": 1994
 }
+
+### To delete a movie
+DELETE http://localhost:1234/movies/5ad1a235-0d9c-410a-b32b-220d91689a08
