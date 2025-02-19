@@ -2,7 +2,7 @@
 GET http://localhost:1234/movies
 
 ### Get movies by id.
-GET http://localhost:1234/movies/dcdd0fad-a94c-4810-8acc-5f108d3b18c3
+GET http://localhost:1234/movies/35a7f9f6-0389-49e6-808c-aa56f11e223f
 
 ### Get all the movies from the same genre.
 GET http://localhost:1234/movies?genre=ACTION
@@ -12,8 +12,13 @@ POST http://localhost:1234/movies
 Content-Type: application/json
 
 {
-    "title": 2,
-    "year": "xd"
+    "title": "Sonic 3",
+    "year": 2024,
+    "director": "Tails",
+    "duration": 160,
+    "poster": "https://preview.redd.it/another-new-sonic-3-poster-tickets-confirmed-to-be-sold-v0-3em2h4oico1e1.jpg?width=1080&crop=smart&auto=webp&s=ce4f96c1439eab6fd3d72c13064bc11fb65e1b1f",
+    "genre": ["Action", "Comedy", "Adventure", "Drama"],
+    "rate": 10
 }
 
 ### To change an attribute

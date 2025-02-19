@@ -2,7 +2,7 @@ import {
   validateMovie,
   validatePartialMovie,
 } from '../schemas/moviesSchema.js';
-import { MovieModel } from '../models/movie.js';
+import { MovieModel } from '../models/local-fs/movie.js';
 
 export class MovieController {
   static async getAll(req, res) {
@@ -28,7 +28,7 @@ export class MovieController {
         .json({ message: JSON.parse(result.error.message) });
     }
 
-    const newMovie = await MovieModel.create(result.data);
+    const newMovie = await MovieModel.create({ input: result.data });
     res.status(201).json(newMovie);
   }
 
