@@ -5,7 +5,7 @@ dotenv.config();
 
 //---------------------------------------
 
-export const connectDB = async () => {
+export async function connectDB() {
   try {
     await mongoose.connect(process.env.MONGODB_URI, {
       dbName: 'MovieSeat',
@@ -20,16 +20,16 @@ export const connectDB = async () => {
     console.error('Database connection error:', error);
     process.exit(1); // Exit process with failure
   }
-};
+}
 
-export const disconnectDB = async () => {
+export async function disconnectDB() {
   try {
     await mongoose.disconnect();
     console.log('Disconnected successfully from the database');
   } catch (error) {
     console.error('Error disconnecting from the database', error);
   }
-};
+}
 
 const { Schema } = mongoose;
 const movieSchema = new Schema({

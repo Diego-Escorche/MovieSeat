@@ -2,21 +2,18 @@ import {
   validateMovie,
   validatePartialMovie,
 } from '../schemas/moviesSchema.js';
+import { MovieModel } from '../models/local-fs/movie.js';
 
 export class MovieController {
-  constructor({ movieModel }) {
-    this.movieModel = movieModel;
-  }
-
   static async getAll(req, res) {
     const { genre } = req.query;
-    const movies = await movieModel.getAll({ genre });
+    const movies = await MovieModel.getAll({ genre });
     return res.json(movies);
   }
 
   static async getById(req, res) {
     const { id } = req.params;
-    const movie = await movieModel.getById({ id });
+    const movie = await MovieModel.getById({ id });
 
     if (movie) return res.json(movie);
     return res.status(404).json({ message: 'Movie not found' });
@@ -31,13 +28,13 @@ export class MovieController {
         .json({ message: JSON.parse(result.error.message) });
     }
 
-    const newMovie = await movieModel.create({ input: result.data });
+    const newMovie = await MovieModel.create({ input: result.data });
     res.status(201).json(newMovie);
   }
 
   static async delete(req, res) {
     const { id } = req.params;
-    const check = await movieModel.delete({ id });
+    const check = await MovieModel.delete({ id });
 
     if (check === false) {
       return res
@@ -58,7 +55,7 @@ export class MovieController {
     }
 
     const { id } = req.params;
-    const updatedMovie = await movieModel.update({ id, input: result.data });
+    const updatedMovie = await MovieModel.update({ id, input: result.data });
     return res.json(updatedMovie);
   }
 }

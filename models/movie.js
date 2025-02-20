@@ -1,5 +1,4 @@
-import { disconnect } from 'process';
-import { connectDB, disconnectDB, Movie } from './mongodb/DBBroker';
+import { connectDB, disconnectDB, Movie } from './mongodb/DBBroker.js';
 import { randomUUID } from 'crypto';
 
 export class MovieModel {
@@ -10,10 +9,12 @@ export class MovieModel {
 
     if (genre) {
       movies = await Movie.find({ genre: { $regex: new RegExp(genre, 'i') } });
+      await disconnectDB;
       return movies;
     }
 
     movies = await Movie.find({});
+
     await disconnectDB;
 
     return movies;
@@ -65,3 +66,5 @@ export class MovieModel {
     return updatedMovie;
   }
 }
+
+MovieModel.getAll({ genre: null });
