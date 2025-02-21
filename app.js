@@ -9,14 +9,14 @@ export const createApp = async ({ movieModel }) => {
 
   const app = express();
   app.use(json());
-  app.use(corsMiddleware);
+  app.use(corsMiddleware({ acceptedOrigins: '*' }));
   app.disable('x-powered-by');
 
   app.use('/movies', createMovieRouter({ movieModel }));
 
   const PORT = process.env.PORT ?? 1234;
 
-  const server = app.listen(PORT, () => {
+  const server = await app.listen(PORT, () => {
     console.log(`listening on port: http://localhost:${PORT}`);
   });
 

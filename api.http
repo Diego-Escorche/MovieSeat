@@ -2,7 +2,7 @@
 GET http://localhost:1234/movies
 
 ### Get movies by id.
-GET http://localhost:1234/movies/35a7f9f6-0389-49e6-808c-aa56f11e223f
+GET http://localhost:1234/movies/dcdd0fad-a94c-4810-8acc-5f108d3b18c3
 
 ### Get all the movies from the same genre.
 GET http://localhost:1234/movies?genre=ACTION
@@ -22,12 +22,12 @@ Content-Type: application/json
 }
 
 ### To change an attribute
-PATCH http://localhost:1234/movies/dcdd0fad-a94c-4810-8acc-5f108d3b18c3
+PATCH http://localhost:1234/movies/f49d7219-a809-491b-be5d-7186026dec84
 Content-Type: application/json
 
 {
-    "year": 1994
+    "year": 2024
 }
 
 ### To delete a movie
-DELETE http://localhost:1234/movies/5ad1a235-0d9c-410a-b32b-220d91689a08
+DELETE http://localhost:1234/movies/f49d7219-a809-491b-be5d-7186026dec84
