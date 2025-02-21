@@ -3,6 +3,9 @@ import { ServerApiVersion } from 'mongodb';
 import dotenv from 'dotenv';
 dotenv.config();
 
+// Allow debug
+mongoose.set('debug', true);
+
 //---------------------------------------
 
 export async function connectDB() {
@@ -18,7 +21,7 @@ export async function connectDB() {
     console.log(`Connected to the database ${mongoose.connection.name}`);
   } catch (error) {
     console.error('Database connection error:', error);
-    process.exit(1); // Exit process with failure
+    process.exit(1); // Salir del proceso con error
   }
 }
 

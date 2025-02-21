@@ -1,70 +1,50 @@
-import { connectDB, disconnectDB, Movie } from './mongodb/DBBroker.js';
+import { Movie } from './mongodb/DBBroker.js';
 import { randomUUID } from 'crypto';
 
 export class MovieModel {
   static async getAll({ genre }) {
-    await connectDB;
-
     let movies;
 
     if (genre) {
-      movies = await Movie.find({ genre: { $regex: new RegExp(genre, 'i') } });
-      await disconnectDB;
+      movies = await Movie.find({
+        genre: { $regex: new RegExp(genre, 'i') },
+      }).toArray();
+
       return movies;
     }
 
-    movies = await Movie.find({});
-
-    await disconnectDB;
-
+    movies = await Movie.find({}).toArray();
     return movies;
   }
 
   static async getById({ id }) {
-    await connectDB;
-
-    const movie = Movie.findById(id);
-
-    await disconnectDB;
-
+    const movie = await Movie.findOne({ _id: id });
     return movie;
   }
 
   static async create({ input }) {
-    await connectDB;
-
     const newMovie = new Movie({
       _id: randomUUID(),
       ...input,
     });
 
-    await newMovie.save();
-    await disconnectDB;
-
+    await newMovie.save().catch((err) => console.log(err));
     return newMovie;
   }
 
   static async delete({ id }) {
-    await connectDB;
-
-    const deletedMovie = await Movie.findByIdAndDelete(id);
-
-    await disconnectDB;
+    const deletedMovie = await Movie.findByIdAndDelete({ _id: id }).catch(
+      (err) => console.log(err),
+    );
 
     return !deletedMovie ? false : true;
   }
 
   static async update({ id, input }) {
-    await connectDB;
-
-    const updatedMovie = await Movie.findByIdAndUpdate(id, input, {
+    const updatedMovie = await Movie.findByIdAndUpdate({ _id: id }, input, {
       new: true,
-    });
-
-    await disconnectDB;
+    }).catch((err) => console.log(err));
 
     return updatedMovie;
   }
 }
-
-MovieModel.getAll({ genre: null });
