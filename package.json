@@ -24,6 +24,7 @@
     "prettier": "^3.5.1"
   },
   "scripts": {
+    "start": "node --watch server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

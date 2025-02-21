@@ -8,17 +8,17 @@ export class MovieModel {
     if (genre) {
       movies = await Movie.find({
         genre: { $regex: new RegExp(genre, 'i') },
-      }).toArray();
+      }).catch((err) => console.log(err));
 
       return movies;
     }
 
-    movies = await Movie.find({}).toArray();
+    movies = await Movie.find({}).catch((err) => console.log(err));
     return movies;
   }
 
   static async getById({ id }) {
-    const movie = await Movie.findOne({ _id: id });
+    const movie = await Movie.findById(id).catch((err) => console.log(err));
     return movie;
   }
 
