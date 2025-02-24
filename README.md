@@ -46,10 +46,14 @@ Once the application is running, you can use the following API endpoints to inte
   ```json
   [
     {
-      "id": "1",
-      "title": "Movie Title",
-      "genre": "Genre",
-      "releaseDate": "2023-01-01"
+       "id": "1",
+       "title": "Movie title",
+       "year": 2024,
+       "director": "Directors name",
+       "duration": 160,
+       "poster": "Poster link",
+       "genre": ["Action", "Comedy", "Adventure", "Drama"],
+       "rate": 10
     }
     // ...more movies
   ]
@@ -62,10 +66,14 @@ Once the application is running, you can use the following API endpoints to inte
 - **Response:**
   ```json
   {
-    "id": "1",
-    "title": "Movie Title",
-    "genre": "Genre",
-    "releaseDate": "2023-01-01"
+       "id": "1",
+       "title": "Movie title",
+       "year": 2024,
+       "director": "Directors name",
+       "duration": 160,
+       "poster": "Poster link",
+       "genre": ["Action", "Comedy", "Adventure", "Drama"],
+       "rate": 10
   }
   ```
 
@@ -76,18 +84,26 @@ Once the application is running, you can use the following API endpoints to inte
 - **Request Body:**
   ```json
   {
-    "title": "New Movie",
-    "genre": "Genre",
-    "releaseDate": "2023-01-01"
+       "title": "Movie title",
+       "year": 2024,
+       "director": "Directors name",
+       "duration": 123,
+       "poster": "Poster link",
+       "genre": ["Genres"],
+       "rate": 7
   }
   ```
 - **Response:**
   ```json
   {
-    "id": "2",
-    "title": "New Movie",
-    "genre": "Genre",
-    "releaseDate": "2023-01-01"
+       "id": "2",
+       "title": "Movie title",
+       "year": 2024,
+       "director": "Directors name",
+       "duration": 123,
+       "poster": "Poster link",
+       "genre": ["Genres"],
+       "rate": 7
   }
   ```
 
@@ -98,18 +114,20 @@ Once the application is running, you can use the following API endpoints to inte
 - **Request Body:**
   ```json
   {
-    "title": "Updated Movie",
-    "genre": "Updated Genre",
-    "releaseDate": "2023-01-01"
+    "year": 2022
   }
   ```
 - **Response:**
   ```json
   {
-    "id": "1",
-    "title": "Updated Movie",
-    "genre": "Updated Genre",
-    "releaseDate": "2023-01-01"
+       "id": "1",
+       "title": "Movie title",
+       "year": 2022,
+       "director": "Directors name",
+       "duration": 160,
+       "poster": "Poster link",
+       "genre": ["Action", "Comedy", "Adventure", "Drama"],
+       "rate": 10
   }
   ```
 
