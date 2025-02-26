@@ -4,7 +4,7 @@ import { z } from 'zod'; // To validate the JSON data
 const movieSchema = z.object({
   title: z.string({
     invalid_type_error: 'Movie title must be a string.',
-    required_error: 'Movie tittle is required.',
+    required_error: 'Movie title is required.',
   }),
   year: z.number().int(),
   director: z.string(),
