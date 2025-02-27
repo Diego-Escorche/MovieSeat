@@ -19,7 +19,7 @@ export class UserController {
     if (!validation.success) return res.status(400).json(validation.error);
 
     const newUser = await this.userModel.register(user);
-    return res.json(newUser);
+    res.json(newUser);
   };
 
   delete = async (req, res) => {

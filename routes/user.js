@@ -8,9 +8,10 @@ export const createUserRouter = ({ userModel }) => {
 
   // ------------------- RUTAS -------------------------
 
-  userRouter.get('/', userController.login);
+  userRouter.post('/', userController.login);
   userRouter.post('/', userController.register);
   userRouter.delete('/:id', userController.delete);
+  userRouter.logout('/', userController.logout);
 
   return userRouter;
 };
