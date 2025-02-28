@@ -3,8 +3,9 @@ import { createMovieRouter } from './routes/movies.js';
 import { corsMiddleware } from './middlewares/cors.js';
 import 'dotenv/config';
 import { connectDB, disconnectDB } from './models/mongodb/DBBroker.js';
+import { createUserRouter } from './routes/user.js';
 
-export const createApp = async ({ movieModel }) => {
+export const createApp = async ({ movieModel, userModel }) => {
   await connectDB();
 
   const app = express();
@@ -13,6 +14,7 @@ export const createApp = async ({ movieModel }) => {
   app.disable('x-powered-by');
 
   app.use('/movies', createMovieRouter({ movieModel }));
+  app.use('/users', createUserRouter({ userModel }));
 
   const PORT = process.env.PORT ?? 1234;
 

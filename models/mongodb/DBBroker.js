@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import { ServerApiVersion } from 'mongodb';
 import dotenv from 'dotenv';
+import { randomUUID } from 'crypto';
+
 dotenv.config();
 
 // Allow debug
@@ -39,6 +41,7 @@ const movieSchema = new Schema({
   _id: {
     type: String,
     required: true,
+    default: randomUUID,
   },
   title: {
     type: String,
@@ -70,4 +73,12 @@ const movieSchema = new Schema({
   },
 });
 
+const userSchema = new Schema({
+  _id: { type: String, required: true, default: randomUUID },
+  username: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+});
+
 export const Movie = mongoose.model('Movie', movieSchema);
+export const User = mongoose.model('User', userSchema);
