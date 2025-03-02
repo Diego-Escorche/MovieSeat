@@ -14,7 +14,7 @@ export const createApp = async ({ movieModel, userModel }) => {
   app.disable('x-powered-by');
 
   app.use('/movies', createMovieRouter({ movieModel }));
-  app.use('/users', createUserRouter({ userModel }));
+  app.use('/auth', createUserRouter({ userModel }));
 
   const PORT = process.env.PORT ?? 1234;
 

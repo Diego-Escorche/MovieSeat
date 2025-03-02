@@ -18,7 +18,9 @@ export class UserController {
     if (!isPasswordValid)
       return res.status(401).json({ message: 'Invalid password' });
 
+    // Creates a JWT Token with the users id and the secret to sign it.
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
+    // Then it stores it in a cookie.
     res.cookie('access_token', token, {
       httpOnly: true,
       secure: true,
@@ -32,7 +34,7 @@ export class UserController {
     const validation = validateUser(user);
     if (!validation.success) return res.status(400).json(validation.error);
 
-    hashedPassword = await bcrypt.hast(user.password, 10);
+    const hashedPassword = await bcrypt.hast(user.password, 10);
     const newUser = await this.userModel.register({
       ...user,
       password: hashedPassword,

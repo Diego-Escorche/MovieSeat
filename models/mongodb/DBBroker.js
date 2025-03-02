@@ -37,45 +37,33 @@ export async function disconnectDB() {
 }
 
 const { Schema } = mongoose;
+
+const seatSchema = new Schema({
+  seatNumber: { type: String, required: true },
+  isAvailable: { type: Boolean, default: true },
+});
+
+const functionSchema = new Schema({
+  date: { type: Date, required: true },
+  time: { type: String, required: true },
+  seats: [seatSchema],
+});
+
 const movieSchema = new Schema({
-  _id: {
-    type: String,
-    required: true,
-    default: randomUUID,
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-  year: {
-    type: Number,
-    required: true,
-  },
-  director: {
-    type: String,
-    required: true,
-  },
-  duration: {
-    type: Number,
-    required: true,
-  },
-  poster: {
-    type: String,
-    required: true,
-  },
-  genre: {
-    type: [String],
-    required: true,
-  },
-  rate: {
-    type: Number,
-    required: true,
-  },
+  _id: { type: String, default: randomUUID },
+  title: { type: String, required: true },
+  year: { type: Number, required: true },
+  director: { type: String, required: true },
+  duration: { type: Number, required: true },
+  poster: { type: String, required: true },
+  genre: { type: [String], required: true },
+  rate: { type: Number, required: true },
+  functions: [functionSchema],
 });
 
 const userSchema = new Schema({
-  _id: { type: String, required: true, default: randomUUID },
-  username: { type: String, required: true },
+  _id: { type: String, default: randomUUID },
+  username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
 });
