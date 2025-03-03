@@ -6,6 +6,7 @@ import { bcrypt } from 'bcrypt';
 import { connectDB, disconnectDB } from './models/mongodb/DBBroker.js';
 import { createUserRouter } from './routes/user.js';
 import { cookieparser } from 'cookie-parser';
+import { fs } from 'fs';
 
 export const createApp = async ({ movieModel, userModel }) => {
   await connectDB();
@@ -14,7 +15,10 @@ export const createApp = async ({ movieModel, userModel }) => {
   app.use(json());
   app.use(corsMiddleware({ acceptedOrigins: '*' }));
   app.use(cookieparser());
+
   app.disable('x-powered-by');
+
+  // Function to create the first admin user if the flag is set.
   const createInitialAdmin = async () => {
     const email = process.env.ADMIN_EMAIL;
     const username = process.env.ADMIN_USERNAME;
@@ -64,6 +68,10 @@ export const createApp = async ({ movieModel, userModel }) => {
 
   app.use('/movies', createMovieRouter({ movieModel }));
   app.use('/auth', createUserRouter({ userModel }));
+  app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ message: 'Internal Server Error' });
+  });
 
   const PORT = process.env.PORT ?? 1234;
 
