@@ -47,7 +47,7 @@ export class UserController {
     if (!validation.success) return res.status(400).json(validation.error);
 
     // The password will be encrypted for security reasons.
-    const hashedPassword = await bcrypt.hast(user.password, 10);
+    const hashedPassword = await bcrypt.hash(user.password, 10);
     const newUser = await this.userModel.register({
       ...user,
       password: hashedPassword,
@@ -70,6 +70,37 @@ export class UserController {
     if (deletedUser) return res.json(deletedUser);
 
     res.status(404).json({ message: 'User not found' });
+  };
+
+  /**
+   * Promotes a user to an admin role.
+   * This method should be protected by authentication and authorization.
+   * @param {*} req
+   * @param {*} res
+   * @returns The updated user with admin role.
+   */
+  promoteToAdmin = async (req, res) => {
+    const { userId } = req.params;
+
+    // Validate that userId is a number
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
+    // Ensure that only authorized personnel can access this method
+    if (!req.user || req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    const user = await this.userModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.role = ['admin'];
+    const updatedUser = await this.userModel.update(userId, user);
+
+    res.json(updatedUser);
   };
 
   logout = (req, res) => {

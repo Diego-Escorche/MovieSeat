@@ -4,6 +4,7 @@ import { corsMiddleware } from './middlewares/cors.js';
 import 'dotenv/config';
 import { connectDB, disconnectDB } from './models/mongodb/DBBroker.js';
 import { createUserRouter } from './routes/user.js';
+import { cookieparser } from 'cookie-parser';
 
 export const createApp = async ({ movieModel, userModel }) => {
   await connectDB();
@@ -11,6 +12,7 @@ export const createApp = async ({ movieModel, userModel }) => {
   const app = express();
   app.use(json());
   app.use(corsMiddleware({ acceptedOrigins: '*' }));
+  app.use(cookieparser());
   app.disable('x-powered-by');
 
   app.use('/movies', createMovieRouter({ movieModel }));
