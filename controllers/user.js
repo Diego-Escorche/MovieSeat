@@ -46,6 +46,7 @@ export class UserController {
     const validation = validateUser(user);
     if (!validation.success) return res.status(400).json(validation.error);
 
+    // The password will be encrypted for security reasons.
     const hashedPassword = await bcrypt.hast(user.password, 10);
     const newUser = await this.userModel.register({
       ...user,
@@ -56,7 +57,11 @@ export class UserController {
       email: newUser.email,
       username: newUser.username,
       password: newUser.password,
+      role: newUser.role,
     };
+
+    // Calls the login method to inmeadiately log in the user after registering.
+    this.login(req, res);
   };
 
   delete = async (req, res) => {

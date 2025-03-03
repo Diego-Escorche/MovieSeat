@@ -16,6 +16,7 @@ const userSchema = z.object({
   password: z.string().min(8, {
     message: 'Password must be at least 8 characters',
   }),
+  role: z.array(z.enum(['user', 'admin'])).default(['user']),
 });
 
 export function validateUser(object) {
