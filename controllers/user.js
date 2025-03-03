@@ -80,27 +80,32 @@ export class UserController {
    * @returns The updated user with admin role.
    */
   promoteToAdmin = async (req, res) => {
-    const { userId } = req.params;
+    try {
+      const { userId } = req.params;
 
-    // Validate that userId is a number
-    if (isNaN(userId)) {
-      return res.status(400).json({ message: 'Invalid user ID' });
+      // Validate that userId is a number
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: 'Invalid user ID' });
+      }
+
+      // Ensure that only authorized personnel can access this method
+      if (!req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Forbidden' });
+      }
+
+      const user = await this.userModel.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      user.role = ['admin'];
+      const updatedUser = await this.userModel.update(userId, user);
+
+      res.json(updatedUser);
+    } catch (error) {
+      console.error('Error promoting user to admin:', error);
+      res.status(500).json({ message: 'Internal server error' });
     }
-
-    // Ensure that only authorized personnel can access this method
-    if (!req.user || req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Forbidden' });
-    }
-
-    const user = await this.userModel.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    user.role = ['admin'];
-    const updatedUser = await this.userModel.update(userId, user);
-
-    res.json(updatedUser);
   };
 
   logout = (req, res) => {
