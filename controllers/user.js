@@ -1,4 +1,4 @@
-import { validateUser, validatePartialUser } from '../schemas/userSchema';
+import { validateUser } from '../schemas/userSchema';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import JWT_SECRET from '../.env';
@@ -8,6 +8,12 @@ export class UserController {
     this.userModel = userModel;
   }
 
+  /**
+   *
+   * @param {*} req
+   * @param {*} res
+   * @returns The user with a signed JWT Token in a cookie.
+   */
   login = async (req, res) => {
     const { email, username, password } = req.body;
     const user = await this.userModel.login({ email, username, password });
@@ -29,6 +35,12 @@ export class UserController {
     res.json({ message: 'Login successful' });
   };
 
+  /**
+   *
+   * @param {*} req
+   * @param {*} res
+   * @returns The new user that has been created.
+   */
   register = async (req, res) => {
     const user = req.body;
     const validation = validateUser(user);
@@ -39,7 +51,12 @@ export class UserController {
       ...user,
       password: hashedPassword,
     });
-    res.json(newUser);
+
+    req.body = {
+      email: newUser.email,
+      username: newUser.username,
+      password: newUser.password,
+    };
   };
 
   delete = async (req, res) => {

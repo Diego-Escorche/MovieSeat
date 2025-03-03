@@ -50,7 +50,7 @@ const functionSchema = new Schema({
 });
 
 const movieSchema = new Schema({
-  _id: { type: String, default: randomUUID },
+  _id: { type: String, default: randomUUID(), unique: true },
   title: { type: String, required: true },
   year: { type: Number, required: true },
   director: { type: String, required: true },
@@ -58,11 +58,11 @@ const movieSchema = new Schema({
   poster: { type: String, required: true },
   genre: { type: [String], required: true },
   rate: { type: Number, required: true },
-  functions: [functionSchema],
+  functions: { type: [functionSchema], default: [] },
 });
 
 const userSchema = new Schema({
-  _id: { type: String, default: randomUUID },
+  _id: { type: String, default: randomUUID() },
   username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
