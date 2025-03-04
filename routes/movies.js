@@ -23,8 +23,18 @@ export const createMovieRouter = ({ movieModel, userModel }) => {
     authorize('admin'),
     movieController.create,
   );
-  moviesRouter.patch('/:id', movieController.update);
-  moviesRouter.delete('/:id', movieController.delete);
+  moviesRouter.patch(
+    '/:id',
+    authenticate({ userModel }),
+    authorize('admin'),
+    movieController.update,
+  );
+  moviesRouter.delete(
+    '/:id',
+    authenticate({ userModel }),
+    authorize('admin'),
+    movieController.delete,
+  );
 
   return moviesRouter;
 };
