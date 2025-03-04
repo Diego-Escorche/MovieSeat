@@ -22,6 +22,10 @@ export class UserModel {
     return newUser;
   }
 
+  static async update({ id, user }) {
+    return User.findByIdAndUpdate({ _id: id }, user, { new: true });
+  }
+
   static async delete({ id }) {
     return User.findByIdAndDelete({ _id: id });
   }

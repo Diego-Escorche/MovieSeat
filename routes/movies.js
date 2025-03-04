@@ -6,8 +6,9 @@
 
 import { Router } from 'express';
 import { MovieController } from '../controllers/movie.js';
+import { authenticate, authorize } from '../middlewares/auth/auth.js';
 
-export const createMovieRouter = ({ movieModel }) => {
+export const createMovieRouter = ({ movieModel, userModel }) => {
   const moviesRouter = Router();
 
   const movieController = new MovieController({ movieModel });
@@ -16,7 +17,12 @@ export const createMovieRouter = ({ movieModel }) => {
 
   moviesRouter.get('/', movieController.getAll);
   moviesRouter.get('/:id', movieController.getById);
-  moviesRouter.post('/', movieController.create);
+  moviesRouter.post(
+    '/',
+    authenticate({ userModel }),
+    authorize('admin'),
+    movieController.create,
+  );
   moviesRouter.patch('/:id', movieController.update);
   moviesRouter.delete('/:id', movieController.delete);
 

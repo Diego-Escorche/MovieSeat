@@ -1,5 +1,6 @@
 import express, { json } from 'express';
 import { createMovieRouter } from './routes/movies.js';
+import { validateUser } from './schemas/userSchema.js';
 import { corsMiddleware } from './middlewares/cors.js';
 import 'dotenv/config';
 import { bcrypt } from 'bcrypt';
@@ -29,10 +30,10 @@ export const createApp = async ({ movieModel, userModel }) => {
       return;
     }
 
-    let user = await userModel.findOne({ email });
+    let user = await userModel.login({ email, username, password });
     if (!user) {
       const hashedPassword = await bcrypt.hash(password, 10);
-      user = await userModel.create({
+      user = await userModel.register({
         email,
         username,
         password: hashedPassword,
@@ -42,10 +43,10 @@ export const createApp = async ({ movieModel, userModel }) => {
     } else if (
       !user.role.includes('admin') &&
       user.username === username &&
-      bcrypt.compare(password, user.password)
+      (await bcrypt.compare(password, user.password))
     ) {
       user.role.push('admin');
-      await userModel.update(user._id, user);
+      await userModel.update({ id: user._id, user });
       console.log('User promoted to admin successfully');
     }
 
@@ -66,7 +67,7 @@ export const createApp = async ({ movieModel, userModel }) => {
     });
   }
 
-  app.use('/movies', createMovieRouter({ movieModel }));
+  app.use('/movies', createMovieRouter({ movieModel, userModel }));
   app.use('/auth', createUserRouter({ userModel }));
   app.use((err, req, res, next) => {
     console.error(err.stack);
@@ -75,7 +76,7 @@ export const createApp = async ({ movieModel, userModel }) => {
 
   const PORT = process.env.PORT ?? 1234;
 
-  const server = await app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     console.log(`listening on port: http://localhost:${PORT}`);
   });
 
