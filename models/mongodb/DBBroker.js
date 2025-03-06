@@ -258,7 +258,7 @@ const reservationSchema = new Schema({
   movie: { type: String, required: true },
   functionId: { type: String, required: true },
   seats: [{ type: String, required: true }],
-  createdAt: { type: Date, default: Date.now },
+  createdAt: { type: Date, required: true },
 });
 
 export const Movie = mongoose.model('Movie', movieSchema);

@@ -1,9 +1,42 @@
 import { Router } from 'express';
 import { ReservationController } from '../controllers/reservation.js';
-import { authenticate, authorize } from '../middlewares/auth/auth.js';
+import { authenticate } from '../middlewares/auth/auth.js';
 
 export const createReservationRouter = ({
   reservationModel,
   userModel,
   movieModel,
-}) => {};
+}) => {
+  const reservationRouter = Router();
+
+  const reservationController = ReservationController({
+    reservationModel,
+    userModel,
+    movieModel,
+  });
+
+  // ------------------- ROUTES -------------------------
+
+  reservationRouter.get(
+    '/',
+    authenticate({ userModel }),
+    reservationController.get,
+  );
+  reservationRouter.post(
+    '/',
+    authenticate({ userModel }),
+    reservationController.create,
+  );
+  reservationRouter.patch(
+    '/:id',
+    authenticate({ userModel }),
+    reservationController.update,
+  );
+  reservationRouter.delete(
+    '/:id',
+    authenticate({ userModel }),
+    reservationController.delete,
+  );
+
+  return reservationRouter;
+};
