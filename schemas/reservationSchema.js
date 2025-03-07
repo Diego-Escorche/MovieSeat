@@ -1,4 +1,4 @@
-import { z } from 'zod'; // To validate the JSON data
+import { z } from 'zod';
 
 const reservationSchema = z.object({
   user: z.string,
@@ -7,10 +7,7 @@ const reservationSchema = z.object({
   seats: z.array(z.string),
   createdAt: z.date(),
 });
-export function validateUser(object) {
-  return reservationSchema.safeParse(object);
-}
 
-export function validatePartialUser(object) {
-  return reservationSchema.partial().safeParse(object);
+export function validateReservation(object) {
+  return reservationSchema.safeParse(object);
 }

@@ -2,27 +2,35 @@ import {
   validateMovie,
   validatePartialMovie,
 } from '../schemas/moviesSchema.js';
+import { asyncHandler } from '../utils.js';
 
 export class MovieController {
   constructor({ movieModel }) {
     this.movieModel = movieModel;
   }
 
-  getAll = async (req, res) => {
+  getAll = asyncHandler(async (req, res) => {
     const { genre } = req.query;
-    const movies = await this.movieModel.getAll({ genre });
-    return res.json(movies);
-  };
+    let movies;
 
-  getById = async (req, res) => {
+    if (genre) {
+      movies = await this.movieModel.getAll({ genre: { $in: [genre] } });
+    } else {
+      movies = await this.movieModel.getAll();
+    }
+
+    return res.json(movies);
+  });
+
+  getById = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const movie = await this.movieModel.getById({ id });
 
     if (movie) return res.json(movie);
     res.status(404).json({ message: 'Movie not found' });
-  };
+  });
 
-  create = async (req, res) => {
+  create = asyncHandler(async (req, res) => {
     const result = validateMovie(req.body);
     if (result.error) {
       // It could also be used the 422 error message.
@@ -33,9 +41,9 @@ export class MovieController {
 
     const newMovie = await this.movieModel.create({ input: result.data });
     res.status(201).json(newMovie);
-  };
+  });
 
-  delete = async (req, res) => {
+  delete = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const check = await this.movieModel.delete({ id });
 
@@ -46,9 +54,9 @@ export class MovieController {
     } else {
       return res.json({ message: 'Movie deleted successfully' });
     }
-  };
+  });
 
-  update = async (req, res) => {
+  update = asyncHandler(async (req, res) => {
     const result = validatePartialMovie(req.body);
 
     if (!result.success) {
@@ -63,5 +71,5 @@ export class MovieController {
       input: result.data,
     });
     return res.json(updatedMovie);
-  };
+  });
 }

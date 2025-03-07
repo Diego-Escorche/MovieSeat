@@ -20,7 +20,7 @@ export const createReservationRouter = ({
   reservationRouter.get(
     '/',
     authenticate({ userModel }),
-    reservationController.get,
+    reservationController.getAll,
   );
   reservationRouter.post(
     '/',
