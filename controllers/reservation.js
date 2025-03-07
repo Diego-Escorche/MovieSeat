@@ -2,7 +2,6 @@ import {
   validateReservation,
   validatePartialReservation,
 } from '../schemas/reservationSchema.js';
-import JWT_SECRET from '../.env';
 import { asyncHandler } from '../utils.js';
 
 export class ReservationController {

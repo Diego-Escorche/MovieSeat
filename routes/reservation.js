@@ -9,7 +9,7 @@ export const createReservationRouter = ({
 }) => {
   const reservationRouter = Router();
 
-  const reservationController = ReservationController({
+  const reservationController = new ReservationController({
     reservationModel,
     userModel,
     movieModel,

@@ -9,7 +9,11 @@ import { createUserRouter } from './routes/user.js';
 import { cookieparser } from 'cookie-parser';
 import { fs } from 'fs';
 
-export const createApp = async ({ movieModel, userModel }) => {
+export const createApp = async ({
+  movieModel,
+  userModel,
+  reservationModel,
+}) => {
   await connectDB();
 
   const app = express();
@@ -69,6 +73,10 @@ export const createApp = async ({ movieModel, userModel }) => {
 
   app.use('/movies', createMovieRouter({ movieModel, userModel }));
   app.use('/auth', createUserRouter({ userModel }));
+  app.use(
+    '/reservations',
+    createReservationRouter({ reservationModel, userModel, movieModel }),
+  );
   app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ message: 'Internal Server Error' });
