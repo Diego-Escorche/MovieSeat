@@ -254,6 +254,7 @@ const functionSchema = new Schema({
 });
 
 const reservationSchema = new Schema({
+  _id: { type: String, default: randomUUID(), unique: true, required: true },
   user: { type: String, required: true },
   movie: { type: String, required: true },
   functionId: { type: String, required: true },

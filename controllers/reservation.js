@@ -1,5 +1,7 @@
-import { validateReservation } from '../schemas/reservationSchema.js';
-import bcrypt from 'bcrypt';
+import {
+  validateReservation,
+  validatePartialReservation,
+} from '../schemas/reservationSchema.js';
 import JWT_SECRET from '../.env';
 import { asyncHandler } from '../utils.js';
 
@@ -12,7 +14,7 @@ export class ReservationController {
 
   getAll = asyncHandler(async (req, res) => {
     const { date } = req.query;
-    let reservations;
+    let reservations = null;
 
     if (date) {
       reservations = await this.reservationModel.getAll({
@@ -30,26 +32,42 @@ export class ReservationController {
     const validation = validateReservation(reservation);
     if (!validation.success) return res.status(400).json(validation.error);
 
-    const newReservation = await this.reservationModel.create(reservation);
-    return res.json(newReservation);
+    const newReservation = await this.reservationModel.create({ reservation });
+
+    if (newReservation) {
+      return res.json(newReservation);
+    }
+
+    res.status(400).json({ message: 'Reservation could not be created' });
   });
 
   update = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const reservation = req.body;
-    const validation = validateReservation(reservation);
+    const validation = validatePartialReservation(reservation);
+
     if (!validation.success) return res.status(400).json(validation.error);
 
-    const updatedReservation = await this.reservationModel.update(
+    const updatedReservation = await this.reservationModel.update({
       id,
       reservation,
-    );
-    return res.json(updatedReservation);
+    });
+
+    if (updatedReservation) {
+      return res.json(updatedReservation);
+    }
+
+    res.status(404).json({ message: 'Reservation not found' });
   });
 
   delete = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    await this.reservationModel.delete(id);
-    return res.json({ message: 'Reservation deleted successfully' });
+    const check = await this.reservationModel.delete({ id: id });
+
+    if (check === true) {
+      return res.json({ message: 'Reservation deleted successfully' });
+    }
+
+    res.status(404).json({ message: 'Reservation not found' });
   });
 }
