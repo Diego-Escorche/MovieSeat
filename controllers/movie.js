@@ -16,7 +16,7 @@ export class MovieController {
     if (genre) {
       movies = await this.movieModel.getAll({ genre: { $in: [genre] } });
     } else {
-      movies = await this.movieModel.getAll();
+      movies = await this.movieModel.getAll({});
     }
 
     return res.json(movies);
