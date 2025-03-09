@@ -23,6 +23,11 @@ Movie-Reserve is a web application for managing a collection of movies. It provi
    ```
    MONGODB_URI=<your_mongodb_uri>
    PORT=<your_port>
+   JWT_SECRET=<your_jwt_secret>
+   ADMIN_EMAIL=<admin_email>
+   ADMIN_USERNAME=<admin_username>
+   ADMIN_PASSWORD=<admin_password>
+   CREATE_INITIAL_ADMIN=true
    ```
 
 4. Start the application:
@@ -46,14 +51,14 @@ Once the application is running, you can use the following API endpoints to inte
   ```json
   [
     {
-       "id": "1",
-       "title": "Movie title",
-       "year": 2024,
-       "director": "Directors name",
-       "duration": 160,
-       "poster": "Poster link",
-       "genre": ["Action", "Comedy", "Adventure", "Drama"],
-       "rate": 10
+      "id": "1",
+      "title": "Movie title",
+      "year": 2024,
+      "director": "Directors name",
+      "duration": 160,
+      "poster": "Poster link",
+      "genre": ["Action", "Comedy", "Adventure", "Drama"],
+      "rate": 10
     }
     // ...more movies
   ]
@@ -66,14 +71,14 @@ Once the application is running, you can use the following API endpoints to inte
 - **Response:**
   ```json
   {
-       "id": "1",
-       "title": "Movie title",
-       "year": 2024,
-       "director": "Directors name",
-       "duration": 160,
-       "poster": "Poster link",
-       "genre": ["Action", "Comedy", "Adventure", "Drama"],
-       "rate": 10
+    "id": "1",
+    "title": "Movie title",
+    "year": 2024,
+    "director": "Directors name",
+    "duration": 160,
+    "poster": "Poster link",
+    "genre": ["Action", "Comedy", "Adventure", "Drama"],
+    "rate": 10
   }
   ```
 
@@ -84,33 +89,33 @@ Once the application is running, you can use the following API endpoints to inte
 - **Request Body:**
   ```json
   {
-       "title": "Movie title",
-       "year": 2024,
-       "director": "Directors name",
-       "duration": 123,
-       "poster": "Poster link",
-       "genre": ["Genres"],
-       "rate": 7
+    "title": "Movie title",
+    "year": 2024,
+    "director": "Directors name",
+    "duration": 123,
+    "poster": "Poster link",
+    "genre": ["Genres"],
+    "rate": 7
   }
   ```
 - **Response:**
   ```json
   {
-       "id": "2",
-       "title": "Movie title",
-       "year": 2024,
-       "director": "Directors name",
-       "duration": 123,
-       "poster": "Poster link",
-       "genre": ["Genres"],
-       "rate": 7
+    "id": "2",
+    "title": "Movie title",
+    "year": 2024,
+    "director": "Directors name",
+    "duration": 123,
+    "poster": "Poster link",
+    "genre": ["Genres"],
+    "rate": 7
   }
   ```
 
 ### Update a Movie
 
 - **URL:** `/movies/:id`
-- **Method:** `PUT`
+- **Method:** `PATCH`
 - **Request Body:**
   ```json
   {
@@ -120,14 +125,14 @@ Once the application is running, you can use the following API endpoints to inte
 - **Response:**
   ```json
   {
-       "id": "1",
-       "title": "Movie title",
-       "year": 2022,
-       "director": "Directors name",
-       "duration": 160,
-       "poster": "Poster link",
-       "genre": ["Action", "Comedy", "Adventure", "Drama"],
-       "rate": 10
+    "id": "1",
+    "title": "Movie title",
+    "year": 2022,
+    "director": "Directors name",
+    "duration": 160,
+    "poster": "Poster link",
+    "genre": ["Action", "Comedy", "Adventure", "Drama"],
+    "rate": 10
   }
   ```
 
@@ -141,3 +146,96 @@ Once the application is running, you can use the following API endpoints to inte
     "message": "Movie deleted successfully"
   }
   ```
+
+## Testing
+
+This project uses Jest for testing. The test files are located in the `__tests__` directory.
+
+### Running Tests
+
+To run the tests, use the following command:
+
+```sh
+npm test
+```
+
+### Test Files
+
+- `__tests__/movieModel.test.js`: Tests for the `MovieModel`.
+- `__tests__/reservationModel.test.js`: Tests for the `ReservationModel`.
+- `__tests__/userModel.test.js`: Tests for the `UserModel`.
+- `__tests__/movieController.test.js`: Tests for the `MovieController`.
+- `__tests__/reservationController.test.js`: Tests for the `ReservationController`.
+- `__tests__/userController.test.js`: Tests for the `UserController`.
+
+### Example Test File
+
+Here is an example of a test file for the `MovieModel`:
+
+```js
+// Import the MovieModel and database connection functions
+import { MovieModel } from '../models/movie.js';
+import { connectDB, disconnectDB } from '../models/mongodb/DBBroker.js';
+
+// Connect to the database before running any tests
+beforeAll(async () => {
+  await connectDB();
+});
+
+// Disconnect from the database after all tests have run
+afterAll(async () => {
+  await disconnectDB();
+});
+
+// Group related tests using describe
+describe('MovieModel', () => {
+  // Test case for getting all movies
+  it('should get all movies', async () => {
+    const movies = await MovieModel.getAll({});
+    expect(movies).toBeInstanceOf(Array); // Check if the result is an array
+    expect(movies.length).toBeGreaterThan(0); // Check if the array is not empty
+  });
+
+  // Test case for getting a movie by ID
+  it('should get a movie by ID', async () => {
+    const movieId = 'dcdd0fad-a94c-4810-8acc-5f108d3b18c3';
+    const movie = await MovieModel.getById({ id: movieId });
+    expect(movie).toHaveProperty('title', 'The Shawshank Redemption'); // Check if the movie has the correct title
+  });
+
+  // Test case for creating a new movie
+  it('should create a new movie', async () => {
+    const newMovie = {
+      title: 'Test Movie',
+      year: 2025,
+      director: 'Test Director',
+      duration: 120,
+      poster: 'https://example.com/poster.jpg',
+      genre: ['Action'],
+      rate: 8,
+    };
+    const createdMovie = await MovieModel.create({ input: newMovie });
+    expect(createdMovie).toHaveProperty('title', 'Test Movie'); // Check if the created movie has the correct title
+  });
+
+  // Test case for updating a movie
+  it('should update a movie', async () => {
+    const movieId = 'dcdd0fad-a94c-4810-8acc-5f108d3b18c3';
+    const updatedData = { year: 2026 };
+    const updatedMovie = await MovieModel.update({
+      id: movieId,
+      input: updatedData,
+    });
+    expect(updatedMovie).toHaveProperty('year', 2026); // Check if the movie has been updated correctly
+  });
+
+  // Test case for deleting a movie
+  it('should delete a movie', async () => {
+    const movieId = 'dcdd0fad-a94c-4810-8acc-5f108d3b18c3';
+    const result = await MovieModel.delete({ id: movieId });
+    expect(result).toBe(true); // Check if the movie was deleted successfully
+  });
+});
+```
+
+By following these instructions, you can set up and run tests for the Movie-Reserve application. If you have any further questions or need additional assistance, feel free to ask!
