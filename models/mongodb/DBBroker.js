@@ -230,6 +230,17 @@ const userSchema = new Schema({
   role: { type: [String], default: ['user'] },
 });
 
+const seatSchema = new Schema({
+  seatNumber: { type: String, required: true },
+  isAvailable: { type: Boolean, default: true },
+});
+
+const functionSchema = new Schema({
+  date: { type: Date, required: true },
+  time: { type: String, required: true },
+  seats: [seatSchema],
+});
+
 const movieSchema = new Schema({
   _id: { type: String, default: randomUUID(), unique: true, required: true },
   title: { type: String, required: true },
@@ -240,17 +251,6 @@ const movieSchema = new Schema({
   genre: { type: [String], required: true },
   rate: { type: Number, required: true },
   functions: { type: [functionSchema], default: [] },
-});
-
-const seatSchema = new Schema({
-  seatNumber: { type: String, required: true },
-  isAvailable: { type: Boolean, default: true },
-});
-
-const functionSchema = new Schema({
-  date: { type: Date, required: true },
-  time: { type: String, required: true },
-  seats: [seatSchema],
 });
 
 const reservationSchema = new Schema({

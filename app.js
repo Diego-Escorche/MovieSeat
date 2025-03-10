@@ -1,6 +1,5 @@
 import express, { json } from 'express';
 import { createMovieRouter } from './routes/movies.js';
-import { validateUser } from './schemas/userSchema.js';
 import { corsMiddleware } from './middlewares/cors.js';
 import 'dotenv/config';
 import { bcrypt } from 'bcrypt';
@@ -14,7 +13,7 @@ export const createApp = async ({
   userModel,
   reservationModel,
 }) => {
-  await connectDB();
+  // await connectDB();
 
   const app = express();
   app.use(json());
@@ -89,15 +88,16 @@ export const createApp = async ({
   });
 
   // Manage the end or interruption of the process to disconnect the database
-  const gracefulShutdown = async () => {
-    console.log('Shutting down gracefully...');
-    await disconnectDB();
-    server.close(() => {
-      console.log('Server closed');
-      process.exit(0);
-    });
-  };
+  // const gracefulShutdown = async () => {
+  //   console.log('Shutting down gracefully...');
+  //   await disconnectDB();
+  //   server.close(() => {
+  //     console.log('Server closed');
+  //     process.exit(0);
+  //   });
+  // };
 
-  process.on('SIGINT', gracefulShutdown);
-  process.on('SIGTERM', gracefulShutdown);
+  // process.on('SIGINT', gracefulShutdown);
+  // process.on('SIGTERM', gracefulShutdown);
+  return app;
 };
