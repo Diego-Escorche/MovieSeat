@@ -23,11 +23,13 @@ export class UserModel {
   }
 
   static async update({ id, user }) {
-    return await User.findByIdAndUpdate({ _id: id }, user, { new: true });
+    return await User.findByIdAndUpdate({ _id: id }, user, { new: true }).catch(
+      (err) => console.log(err),
+    );
   }
 
   static async delete({ id }) {
-    await User.findByIdAndDelete({ _id: id });
+    await User.findByIdAndDelete({ _id: id }).catch((err) => console.log(err));
     const deletedUser = await User.findById({ _id: id });
     return deletedUser ? false : true;
   }

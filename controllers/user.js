@@ -68,7 +68,8 @@ export class UserController {
   delete = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const deletedUser = await this.userModel.delete(id);
-    if (deletedUser) return res.json(deletedUser);
+    if (deletedUser === true)
+      return res.json({ message: 'User deleted succesfully' });
 
     res.status(404).json({ message: 'User not found' });
   });
@@ -93,7 +94,11 @@ export class UserController {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
-    const user = await this.userModel.findById(userId);
+    const user = await this.userModel.update({
+      id: userId,
+      user: { role: ['admin'] },
+    });
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
