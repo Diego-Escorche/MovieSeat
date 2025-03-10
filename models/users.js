@@ -3,7 +3,7 @@ import { User } from './mongodb/DBBroker';
 
 export class UserModel {
   static async login({ email, username }) {
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ email });
     // If a user was not found by email, it'll try to find it by username
     if (!user) {
       user = await User.findOne({ username });
