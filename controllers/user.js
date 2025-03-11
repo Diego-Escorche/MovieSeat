@@ -1,4 +1,4 @@
-import { validateUser } from '../schemas/userSchema';
+import { validateUser, validatePartialUser } from '../schemas/userSchema';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import JWT_SECRET from '../.env';
@@ -33,11 +33,12 @@ export class UserController {
       secure: true,
       sameSite: 'Strict',
     });
-    res.json({ message: 'Login successful' });
+
+    res.json(user);
   });
 
   /**
-   *
+   * Creates a new user and logs it in.
    * @param {*} req
    * @param {*} res
    * @returns The new user that has been created.
@@ -61,10 +62,16 @@ export class UserController {
       role: newUser.role,
     };
 
-    // Calls the login method to inmeadiately log in the user after registering.
+    // Calls the login method to immediately log in the user after registering.
     this.login(req, res);
   });
 
+  /**
+   * Delete an user after authenticating it.
+   * @param {*} req
+   * @param {*} res
+   * @returns A message that the user has been deleted successfully.
+   */
   delete = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const deletedUser = await this.userModel.delete(id);
@@ -74,9 +81,24 @@ export class UserController {
     res.status(404).json({ message: 'User not found' });
   });
 
+  update = asyncHandler(async (req, res) => {
+    const { userId } = req.params;
+    const { updates } = req.body;
+    const check = validatePartialUser(updates);
+    if (!check.success) return res.status(400).json(check.error);
+
+    const updatedUser = await this.userModel.update({
+      id: userId,
+      user: updates,
+    });
+
+    if (updatedUser) return res.json(updatedUser);
+
+    res.status(404).json({ message: 'User not found' });
+  });
+
   /**
    * Promotes a user to an admin role.
-   * This method should be protected by authentication and authorization.
    * @param {*} req
    * @param {*} res
    * @returns The updated user with admin role.
@@ -84,27 +106,14 @@ export class UserController {
   promoteToAdmin = asyncHandler(async (req, res) => {
     const { userId } = req.params;
 
-    // Validate that userId is a number
-    if (isNaN(userId)) {
-      return res.status(400).json({ message: 'Invalid user ID' });
-    }
-
-    // Ensure that only authorized personnel can access this method
-    if (!req.user || req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Forbidden' });
-    }
-
-    const user = await this.userModel.update({
+    const updatedUser = await this.userModel.update({
       id: userId,
       user: { role: ['admin'] },
     });
 
-    if (!user) {
+    if (!updatedUser) {
       return res.status(404).json({ message: 'User not found' });
     }
-
-    user.role = ['admin'];
-    const updatedUser = await this.userModel.update(userId, user);
 
     res.json(updatedUser);
   });

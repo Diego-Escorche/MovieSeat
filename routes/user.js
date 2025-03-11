@@ -9,15 +9,28 @@ export const createUserRouter = ({ userModel }) => {
 
   // ------------------- ROUTES -------------------------
 
-  userRouter.post('/', userController.login);
-  userRouter.post('/', userController.register);
-  userRouter.delete('/:id', userController.delete);
-  userRouter.logout('/', userController.logout);
+  userRouter.post('/login', userController.login);
+  userRouter.post('/register', userController.register);
+  userRouter.delete(
+    '/delete/:id',
+    authenticate({ userModel }),
+    userController.delete,
+  );
+  userRouter.patch(
+    '/update/:userId',
+    authenticate({ userModel }),
+    userController.update,
+  );
   userRouter.patch(
     '/promote/:userId',
     authenticate({ userModel }),
     authorize('admin'),
     userController.promoteToAdmin,
+  );
+  userRouter.post(
+    '/logout',
+    authenticate({ userModel }),
+    userController.logout,
   );
 
   return userRouter;

@@ -29,8 +29,11 @@ export class UserModel {
   }
 
   static async delete({ id }) {
-    await User.findByIdAndDelete({ _id: id }).catch((err) => console.log(err));
-    const deletedUser = await User.findById({ _id: id });
-    return deletedUser ? false : true;
+    await User.findByIdAndDelete({ _id: id }).catch((err) => {
+      console.log(err);
+      return false;
+    });
+
+    return true;
   }
 }
