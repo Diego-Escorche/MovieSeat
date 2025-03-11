@@ -10,7 +10,7 @@ export class UserController {
   }
 
   /**
-   *
+   * Logs in a user, encrypts the password and creates a JWT Token.
    * @param {*} req
    * @param {*} res
    * @returns The user with a signed JWT Token in a cookie.
@@ -44,16 +44,23 @@ export class UserController {
    * @returns The new user that has been created.
    */
   register = asyncHandler(async (req, res) => {
-    const user = req.body;
-    const validation = validateUser(user);
-    if (!validation.success) return res.status(400).json(validation.error);
+    const result = validateUser(req.body);
+    if (result.error)
+      return res
+        .status(400)
+        .json({ message: JSON.parse(result.error.message) });
 
     // The password will be encrypted for security reasons.
-    const hashedPassword = await bcrypt.hash(user.password, 10);
+    const hashedPassword = await bcrypt.hash(result.data.password, 10);
     const newUser = await this.userModel.register({
-      ...user,
-      password: hashedPassword,
+      user: {
+        ...result.data,
+        password: hashedPassword,
+      },
     });
+
+    if (!newUser)
+      return res.status(400).json({ message: 'Error creating user' });
 
     req.body = {
       email: newUser.email,
@@ -67,6 +74,28 @@ export class UserController {
   });
 
   /**
+   * Updates some of the user's information.
+   * @param {*} req
+   * @param {*} res
+   * @returns
+   */
+  update = asyncHandler(async (req, res) => {
+    const { userId } = req.params;
+    const check = validatePartialUser(req.body);
+    if (check.error)
+      return res.status(400).json({ message: JSON.parse(check.error.message) });
+
+    const updatedUser = await this.userModel.update({
+      id: userId,
+      user: updates,
+    });
+
+    if (updatedUser) return res.json(updatedUser);
+
+    res.status(404).json({ message: 'User not found' });
+  });
+
+  /**
    * Delete an user after authenticating it.
    * @param {*} req
    * @param {*} res
@@ -77,22 +106,6 @@ export class UserController {
     const deletedUser = await this.userModel.delete(id);
     if (deletedUser === true)
       return res.json({ message: 'User deleted succesfully' });
-
-    res.status(404).json({ message: 'User not found' });
-  });
-
-  update = asyncHandler(async (req, res) => {
-    const { userId } = req.params;
-    const { updates } = req.body;
-    const check = validatePartialUser(updates);
-    if (!check.success) return res.status(400).json(check.error);
-
-    const updatedUser = await this.userModel.update({
-      id: userId,
-      user: updates,
-    });
-
-    if (updatedUser) return res.json(updatedUser);
 
     res.status(404).json({ message: 'User not found' });
   });

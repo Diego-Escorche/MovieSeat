@@ -33,10 +33,12 @@ export class MovieModel {
   }
 
   static async delete({ id }) {
-    await Movie.findByIdAndDelete({ _id: id }).catch((err) => console.log(err));
+    await Movie.findByIdAndDelete({ _id: id }).catch((err) => {
+      console.log(err);
+      return false;
+    });
 
-    const deletedMovie = await Movie.findById({ _id: id });
-    return deletedMovie ? false : true;
+    return true;
   }
 
   static async update({ id, input }) {

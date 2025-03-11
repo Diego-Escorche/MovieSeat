@@ -67,7 +67,7 @@ export class MovieController {
 
     const { id } = req.params;
     const updatedMovie = await this.movieModel.update({
-      id,
+      id: id,
       input: result.data,
     });
     return res.json(updatedMovie);
