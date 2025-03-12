@@ -25,20 +25,14 @@ export class ReservationModel {
   }
 
   static async update({ id, input }) {
-    const updatedReservation = await Reservation.findByIdAndUpdate(
-      { _id: id },
-      input,
-      { new: true },
-    ).catch((err) => console.log(err));
-
-    return updatedReservation;
+    return await Reservation.findByIdAndUpdate({ _id: id }, input, {
+      new: true,
+    }).catch((err) => console.log(err));
   }
 
   static async delete({ id }) {
-    const deletedReservation = await Reservation.findByIdAndDelete({
+    return await Reservation.findByIdAndDelete({
       _id: id,
     }).catch((err) => console.log(err));
-
-    return !deletedReservation ? false : true;
   }
 }

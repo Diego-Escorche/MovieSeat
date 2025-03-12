@@ -14,11 +14,10 @@ export class MovieModel {
       movies = await Movie.find({
         genre: { $elemMatch: { $regex: new RegExp(genre, 'i') } },
       }).catch((err) => console.log(err));
-
-      return movies;
+    } else {
+      movies = await Movie.find({}).catch((err) => console.log(err));
     }
 
-    movies = await Movie.find({}).catch((err) => console.log(err));
     return movies;
   }
 

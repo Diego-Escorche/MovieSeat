@@ -13,25 +13,29 @@ export class ReservationController {
 
   getAll = asyncHandler(async (req, res) => {
     const { date } = req.query;
-    let reservations = null;
+    let reservations;
 
     if (date) {
       reservations = await this.reservationModel.getAll({
         createdAt: date,
       });
     } else {
-      reservations = await this.reservationModel.getAll();
+      reservations = await this.reservationModel.getAll({});
     }
 
     return res.json(reservations);
   });
 
   create = asyncHandler(async (req, res) => {
-    const reservation = req.body;
-    const validation = validateReservation(reservation);
-    if (!validation.success) return res.status(400).json(validation.error);
+    const validation = validateReservation(req.body);
+    if (!validation.success)
+      return res
+        .status(400)
+        .json({ message: JSON.parse(validation.error.message) });
 
-    const newReservation = await this.reservationModel.create({ reservation });
+    const newReservation = await this.reservationModel.create({
+      input: validation.data,
+    });
 
     if (newReservation) {
       return res.json(newReservation);
@@ -41,15 +45,14 @@ export class ReservationController {
   });
 
   update = asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    const reservation = req.body;
-    const validation = validatePartialReservation(reservation);
-
+    const validation = validatePartialReservation(req.body);
     if (!validation.success) return res.status(400).json(validation.error);
 
+    const { id } = req.params;
+
     const updatedReservation = await this.reservationModel.update({
-      id,
-      reservation,
+      id: id,
+      input: validation.data,
     });
 
     if (updatedReservation) {
@@ -63,7 +66,7 @@ export class ReservationController {
     const { id } = req.params;
     const check = await this.reservationModel.delete({ id: id });
 
-    if (check === true) {
+    if (check) {
       return res.json({ message: 'Reservation deleted successfully' });
     }
 
