@@ -14,7 +14,7 @@ export class MovieController {
     let movies;
 
     if (genre) {
-      movies = await this.movieModel.getAll({ genre: { $in: [genre] } });
+      movies = await this.movieModel.getAll({ genre: genre });
     } else {
       movies = await this.movieModel.getAll({});
     }
@@ -40,20 +40,25 @@ export class MovieController {
     }
 
     const newMovie = await this.movieModel.create({ input: result.data });
-    res.status(201).json(newMovie);
+
+    if (newMovie) {
+      return res.status(201).json(newMovie);
+    }
+
+    res.status(500).json({ message: 'Movie could not be created' });
   });
 
   delete = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const check = await this.movieModel.delete({ id });
 
-    if (check === false) {
+    if (!check) {
       return res
-        .status(400)
+        .status(500)
         .json({ message: 'Movie could not be deleted by an unknown error' });
-    } else {
-      return res.json({ message: 'Movie deleted successfully' });
     }
+
+    res.json({ message: 'Movie deleted successfully' });
   });
 
   update = asyncHandler(async (req, res) => {
@@ -70,6 +75,9 @@ export class MovieController {
       id: id,
       input: result.data,
     });
-    return res.json(updatedMovie);
+
+    if (updatedMovie) return res.json(updatedMovie);
+
+    res.status(500).json({ message: 'Movie could not be updated' });
   });
 }
