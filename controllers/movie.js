@@ -52,13 +52,13 @@ export class MovieController {
     const { id } = req.params;
     const check = await this.movieModel.delete({ id });
 
-    if (!check) {
-      return res
-        .status(500)
-        .json({ message: 'Movie could not be deleted by an unknown error' });
+    if (check) {
+      return res.json({ message: 'Movie deleted successfully' });
     }
 
-    res.json({ message: 'Movie deleted successfully' });
+    res
+      .status(500)
+      .json({ message: 'Movie could not be deleted by an unknown error' });
   });
 
   update = asyncHandler(async (req, res) => {

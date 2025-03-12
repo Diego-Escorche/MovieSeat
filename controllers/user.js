@@ -53,7 +53,7 @@ export class UserController {
     // The password will be encrypted for security reasons.
     const hashedPassword = await bcrypt.hash(result.data.password, 10);
     const newUser = await this.userModel.register({
-      user: {
+      input: {
         ...result.data,
         password: hashedPassword,
       },
@@ -87,7 +87,7 @@ export class UserController {
 
     const updatedUser = await this.userModel.update({
       id: userId,
-      user: updates,
+      input: check.data,
     });
 
     if (updatedUser) return res.json(updatedUser);
@@ -96,7 +96,7 @@ export class UserController {
   });
 
   /**
-   * Delete an user after authenticating it.
+   * Deletes a user after making sure that the user is logged in.
    * @param {*} req
    * @param {*} res
    * @returns A message that the user has been deleted successfully.
@@ -104,8 +104,7 @@ export class UserController {
   delete = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const deletedUser = await this.userModel.delete(id);
-    if (deletedUser === true)
-      return res.json({ message: 'User deleted succesfully' });
+    if (deletedUser) return res.json({ message: 'User deleted succesfully' });
 
     res.status(404).json({ message: 'User not found' });
   });

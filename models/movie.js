@@ -2,6 +2,11 @@ import { Movie } from './mongodb/DBBroker.js';
 import { randomUUID } from 'crypto';
 
 export class MovieModel {
+  /**
+   * Retrieves all movies from the database.
+   * @param {*} param0 Object that contains the genre to filter the movies.
+   * @returns An array with all the movies
+   */
   static async getAll({ genre }) {
     let movies;
 
@@ -53,15 +58,12 @@ export class MovieModel {
   /**
    * Searches for a movie by its id and deletes it.
    * @param {*} param0 Object containing the movie id.
-   * @returns True if the movie was deleted, otherwise false.
+   * @returns True if the movie was deleted, otherwise null.
    */
   static async delete({ id }) {
-    await Movie.findByIdAndDelete({ _id: id }).catch((err) => {
-      console.log(err);
-      return false;
-    });
-
-    return true;
+    return await Movie.findByIdAndDelete({ _id: id }).catch((err) =>
+      console.log(err),
+    );
   }
 
   /**
@@ -70,13 +72,8 @@ export class MovieModel {
    * @returns The updated movie object if it was updated, otherwise null.
    */
   static async update({ id, input }) {
-    const updatedMovie = await Movie.findByIdAndUpdate({ _id: id }, input, {
+    return await Movie.findByIdAndUpdate({ _id: id }, input, {
       new: true,
-    }).catch((err) => {
-      console.log(err);
-      return null;
-    });
-
-    return updatedMovie;
+    }).catch((err) => console.log(err));
   }
 }
