@@ -26,6 +26,24 @@ export class ReservationController {
     return res.json(reservations);
   });
 
+  getByUserId = asyncHandler(async (req, res) => {
+    const { userId } = req.params;
+    const { date } = req.query;
+    let reservations;
+
+    if (userId) {
+      if (date) {
+        reservations = await this.getByUserId({ id: userId, date: date });
+      } else {
+        reservations = await this.getByUserId({ id: userId });
+      }
+
+      return res.json(reservations);
+    }
+
+    res.status(400).json({ message: 'Invalid request syntax' });
+  });
+
   create = asyncHandler(async (req, res) => {
     const validation = validateReservation(req.body);
     if (!validation.success)
