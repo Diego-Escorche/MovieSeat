@@ -7,19 +7,16 @@ export class ReservationModel {
    * @param {*} param0 An Object containing the date.
    * @returns All the reservations that where found. Otherwise a null.
    */
-  static async getAll({ createdAt }) {
-    let reservations;
+  static async getReservations({ createdAt, user, multiple = false }) {
+    const query = {};
 
-    if (createdAt) {
-      reservations = await Reservation.find({ createdAt: createdAt });
-    } else {
-      reservations = await Reservation.find({});
-    }
+    if (createdAt) query.createdAt = createdAt;
+    if (user) query.user = user;
 
-    return reservations;
+    return multiple
+      ? await Reservation.find(query) // Get multiple results
+      : await Reservation.findOne(query); // Get a single result
   }
-
-  static async getByUserId({ id, date }) {}
 
   /**
    * Stores a reservation on the database.

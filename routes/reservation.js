@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { ReservationController } from '../controllers/reservation.js';
-import { authenticate } from '../middlewares/auth/auth.js';
+import { authenticate, authorize } from '../middlewares/auth/auth.js';
 
 export const createReservationRouter = ({
   reservationModel,
@@ -20,7 +20,13 @@ export const createReservationRouter = ({
   reservationRouter.get(
     '/',
     authenticate({ userModel }),
+    authorize('admin'),
     reservationController.getAll,
+  );
+  reservationRouter.get(
+    '/:userId',
+    authenticate({ userModel }),
+    reservationController.getByUserId,
   );
   reservationRouter.post(
     '/',

@@ -16,11 +16,14 @@ export class ReservationController {
     let reservations;
 
     if (date) {
-      reservations = await this.reservationModel.getAll({
+      reservations = await this.reservationModel.getReservations({
         createdAt: date,
+        multiple: true,
       });
     } else {
-      reservations = await this.reservationModel.getAll({});
+      reservations = await this.reservationModel.getReservations({
+        multiple: true,
+      });
     }
 
     return res.json(reservations);
@@ -33,11 +36,17 @@ export class ReservationController {
 
     if (userId) {
       if (date) {
-        reservations = await this.getByUserId({ id: userId, date: date });
+        reservations = await this.reservationModel.getReservations({
+          createdAt: date,
+          user: userId,
+          multiple: true,
+        });
       } else {
-        reservations = await this.getByUserId({ id: userId });
+        reservations = await this.reservationModel.getReservations({
+          user: userId,
+          multiple: true,
+        });
       }
-
       return res.json(reservations);
     }
 
