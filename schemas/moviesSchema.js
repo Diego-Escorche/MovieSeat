@@ -34,9 +34,11 @@ const movieSchema = z.object({
 });
 
 export function validateMovie(object) {
-  return movieSchema.safeParse(object);
+  const { _id, ...data } = object;
+  return movieSchema.safeParse(data);
 }
 
 export function validatePartialMovie(object) {
-  return movieSchema.partial().safeParse(object); // The partial() makes the properties optional when it validates them.
+  const { _id, ...data } = object;
+  return movieSchema.partial().safeParse(data);
 }

@@ -8,14 +8,14 @@ export class ReservationModel {
    * @returns All the reservations that where found. Otherwise a null.
    */
   static async getReservations({ createdAt, user, multiple = false }) {
-    const query = {};
-
-    if (createdAt) query.createdAt = createdAt;
-    if (user) query.user = user;
+    const query = {
+      ...(createdAt && { createdAt: createdAt }),
+      ...(user && { user: user }),
+    };
 
     return multiple
-      ? await Reservation.find(query) // Get multiple results
-      : await Reservation.findOne(query); // Get a single result
+      ? await Reservation.find(query) // Get multiple documents
+      : await Reservation.findOne(query); // Get a single document
   }
 
   /**
@@ -39,7 +39,7 @@ export class ReservationModel {
    * @returns The updated reservation if it exists, otherwise null.
    */
   static async update({ id, input }) {
-    return await Reservation.findByIdAndUpdate({ _id: id }, input, {
+    return await Reservation.findByIdAndUpdate(id, input, {
       new: true,
     }).catch((err) => console.log(err));
   }
@@ -50,8 +50,8 @@ export class ReservationModel {
    * @returns The reservation if it existed, otherwise null.
    */
   static async delete({ id }) {
-    return await Reservation.findByIdAndDelete({
-      _id: id,
-    }).catch((err) => console.log(err));
+    return await Reservation.findByIdAndDelete(id).catch((err) =>
+      console.log(err),
+    );
   }
 }

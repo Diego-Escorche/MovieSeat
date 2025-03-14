@@ -6,25 +6,17 @@ import { asyncHandler } from '../utils.js';
 
 export class ReservationController {
   constructor({ reservationModel, userModel, movieModel }) {
-    (this.reservationModel = reservationModel),
-      (this.userModel = userModel),
-      (this.movieModel = movieModel);
+    this.reservationModel = reservationModel;
+    this.userModel = userModel;
+    this.movieModel = movieModel;
   }
 
   getAll = asyncHandler(async (req, res) => {
     const { date } = req.query;
-    let reservations;
+    const query = { multiple: true };
+    if (date) query.createdAt = date;
 
-    if (date) {
-      reservations = await this.reservationModel.getReservations({
-        createdAt: date,
-        multiple: true,
-      });
-    } else {
-      reservations = await this.reservationModel.getReservations({
-        multiple: true,
-      });
-    }
+    const reservations = await this.reservationModel.getReservations(query);
 
     return res.json(reservations);
   });
@@ -32,25 +24,20 @@ export class ReservationController {
   getByUserId = asyncHandler(async (req, res) => {
     const { userId } = req.params;
     const { date } = req.query;
-    let reservations;
 
-    if (userId) {
-      if (date) {
-        reservations = await this.reservationModel.getReservations({
-          createdAt: date,
-          user: userId,
-          multiple: true,
-        });
-      } else {
-        reservations = await this.reservationModel.getReservations({
-          user: userId,
-          multiple: true,
-        });
-      }
-      return res.json(reservations);
+    if (!userId) {
+      return res.status(400).json({ message: 'Invalid request syntax' });
     }
 
-    res.status(400).json({ message: 'Invalid request syntax' });
+    const query = {
+      user: userId,
+      ...(date && { createdAt: date }),
+      multiple: true,
+    };
+
+    const reservations = await this.reservationModel.getReservations(query);
+
+    return res.json(reservations);
   });
 
   create = asyncHandler(async (req, res) => {
@@ -64,11 +51,13 @@ export class ReservationController {
       input: validation.data,
     });
 
-    if (newReservation) {
-      return res.json(newReservation);
+    if (!newReservation) {
+      return res
+        .status(400)
+        .json({ message: 'Reservation could not be created' });
     }
 
-    res.status(400).json({ message: 'Reservation could not be created' });
+    return res.json(newReservation);
   });
 
   update = asyncHandler(async (req, res) => {
@@ -82,21 +71,23 @@ export class ReservationController {
       input: validation.data,
     });
 
-    if (updatedReservation) {
-      return res.json(updatedReservation);
+    if (!updatedReservation) {
+      return res.status(404).json({ message: 'Reservation not found' });
     }
 
-    res.status(404).json({ message: 'Reservation not found' });
+    return res.json(updatedReservation);
   });
 
   delete = asyncHandler(async (req, res) => {
     const { id } = req.params;
+    if (!id) return res.status(400).json({ message: 'Invalid ID format' });
+
     const check = await this.reservationModel.delete({ id: id });
 
-    if (check) {
-      return res.json({ message: 'Reservation deleted successfully' });
+    if (!check) {
+      return res.status(404).json({ message: 'Reservation not found' });
     }
 
-    res.status(404).json({ message: 'Reservation not found' });
+    return res.json({ message: 'Reservation deleted successfully' });
   });
 }
