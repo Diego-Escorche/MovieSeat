@@ -1,5 +1,5 @@
 import { Movie } from './mongodb/DBBroker.js';
-import { generateSeats } from '../utils/seatGenerator.js';
+import { generateSeats } from '../utils.js';
 
 export class FunctionModel {
   /**
@@ -11,8 +11,14 @@ export class FunctionModel {
     const movie = await Movie.findById(movieId);
     if (!movie) return null;
 
-    input.seats = generateSeats(); // Generate all the seats for the function
-    movie.functions.push(input);
+    // Generate all the seats for the function
+    const { date, time } = input;
+    movie.functions.push({
+      date: date,
+      time: time,
+      seats: generateSeats(),
+    });
+
     await movie.save();
     return movie;
   }

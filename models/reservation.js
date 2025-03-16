@@ -1,4 +1,5 @@
 import { Reservation } from '../models/mongodb/DBBroker';
+import { Movie } from '../models/mongodb/DBBroker';
 import { randomUUID } from 'crypto';
 
 export class ReservationModel {
@@ -24,6 +25,12 @@ export class ReservationModel {
    * @returns The new Reservation after its stored on the database.
    */
   static async create({ input }) {
+    const movie = await new Movie.findById(input.movie);
+
+    if (!movie) {
+      return null;
+    }
+
     const newReservation = new Reservation({
       _id: randomUUID(),
       ...input,

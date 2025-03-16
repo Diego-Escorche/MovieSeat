@@ -22,8 +22,9 @@ export class UserController {
 
     // Checks the password with the one stored on the database
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid)
+    if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid password' });
+    }
 
     // Creates a JWT Token with the users id and the secret to sign it.
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });

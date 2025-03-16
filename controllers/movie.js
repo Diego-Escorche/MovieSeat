@@ -31,6 +31,7 @@ export class MovieController {
 
   create = asyncHandler(async (req, res) => {
     const result = validateMovie(req.body);
+
     if (result.error) {
       // It could also be used the 422 error message.
       return res
@@ -39,7 +40,6 @@ export class MovieController {
     }
 
     const newMovie = await this.movieModel.create({ input: result.data });
-
     if (!newMovie) {
       return res.status(500).json({ message: 'Movie could not be created' });
     }
