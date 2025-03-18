@@ -8,12 +8,12 @@ const reservationSchema = z.object({
   createdAt: z.date(),
 });
 
-export function validateMovie(object) {
+export function validateReservation(object) {
   const { _id, ...data } = object;
-  return movieSchema.safeParse(data);
+  return reservationSchema.safeParse(data);
 }
 
-export function validatePartialMovie(object) {
+export function validatePartialReservation(object) {
   const { _id, ...data } = object;
-  return movieSchema.partial().safeParse(data);
+  return reservationSchema.partial().safeParse(data);
 }

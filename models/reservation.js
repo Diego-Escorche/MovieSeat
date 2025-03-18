@@ -1,5 +1,6 @@
 import { Reservation } from '../models/mongodb/DBBroker';
 import { Movie } from '../models/mongodb/DBBroker';
+import { FunctionModel } from './function.js';
 import { randomUUID } from 'crypto';
 
 export class ReservationModel {
@@ -26,14 +27,19 @@ export class ReservationModel {
    */
   static async create({ input }) {
     const movie = await new Movie.findById(input.movie);
+    if (!movie) return null;
 
-    if (!movie) {
-      return null;
-    }
+    const reservedSeats = await new FunctionModel.reserveSeat({
+      movieId: input.movie,
+      functionId: input.function,
+      seatNumber: input.seats,
+    });
+    if (reservedSeats) return null;
 
     const newReservation = new Reservation({
       _id: randomUUID(),
       ...input,
+      seats: [reservedSeats.forEach((seat) => seat.seatNumber)],
     });
 
     await newReservation.save().catch((err) => console.log(err));
