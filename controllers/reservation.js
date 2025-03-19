@@ -23,11 +23,12 @@ export class ReservationController {
 
   getByUserId = asyncHandler(async (req, res) => {
     const { userId } = req.params;
-    const { date } = req.query;
 
     if (!userId) {
       return res.status(400).json({ message: 'Invalid request syntax' });
     }
+
+    const { date } = req.query;
 
     const query = {
       user: userId,
@@ -40,6 +41,14 @@ export class ReservationController {
     return res.json(reservations);
   });
 
+  /**
+   * Function that will create a reservation after validating the data stored
+   * in the body of the request.
+   * @param {*} req
+   * @param {*} res
+   * @returns The validation in a json if it created it. If an error ocurred it will send
+   * a json with a message.
+   */
   create = asyncHandler(async (req, res) => {
     const validation = validateReservation(req.body);
     if (!validation.success)
@@ -79,10 +88,13 @@ export class ReservationController {
   });
 
   delete = asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const { id, userId } = req.params;
     if (!id) return res.status(400).json({ message: 'Invalid ID format' });
 
-    const check = await this.reservationModel.delete({ id: id });
+    const check = await this.reservationModel.cancelReservation({
+      id: id,
+      userId: userId,
+    });
 
     if (!check) {
       return res.status(404).json({ message: 'Reservation not found' });

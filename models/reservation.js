@@ -26,13 +26,11 @@ export class ReservationModel {
    * @returns The new Reservation after its stored on the database.
    */
   static async create({ input }) {
-    const movie = await new Movie.findById(input.movie);
-    if (!movie) return null;
-
+    const { movie, functionId, seats } = input;
     const reservedSeats = await new FunctionModel.reserveSeat({
-      movieId: input.movie,
-      functionId: input.function,
-      seatNumber: input.seats,
+      movieId: movie,
+      functionId: functionId,
+      seats: seats,
     });
     if (reservedSeats) return null;
 
@@ -62,9 +60,31 @@ export class ReservationModel {
    * @param {*} param0 Object containing the id.
    * @returns The reservation if it existed, otherwise null.
    */
-  static async delete({ id }) {
-    return await Reservation.findByIdAndDelete(id).catch((err) =>
-      console.log(err),
+  static async cancelReservation({ reservationId, userId }) {
+    const reservation = await Reservation.findOne({
+      _id: reservationId,
+      user: userId,
+    });
+    if (!reservation) return null;
+
+    const { movie, functionId, seats } = reservation;
+
+    const movieUpdate = await Movie.findOneAndUpdate(
+      {
+        _id: movie,
+        'functions._id': functionId,
+      },
+      {
+        $set: { 'functions.$[].seats.$[].isAvailable': true },
+      },
+      {
+        arrayFilters: [{ 'seat.seatNumber': { $in: seats } }],
+        new: true,
+      },
     );
+
+    if (!movieUpdate) return null;
+
+    return await Reservation.findByIdAndDelete(reservationId);
   }
 }
