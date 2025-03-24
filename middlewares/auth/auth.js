@@ -21,7 +21,7 @@ export const authenticate = ({ userModel }) => {
 
     try {
       const decoded = jwt.verify(token, secret);
-      const user = await userModel.findById({ id: decoded.id });
+      const user = await userModel.findById(decoded.id);
       if (!user) {
         return res.status(401).json({ message: 'The user does not exist' });
       }

@@ -49,7 +49,7 @@ export class UserModel {
     });
   }
 
-  static async findById({ id }) {
+  static async findById(id) {
     const user = await User.findById(id).lean();
     if (!user) return null;
 
