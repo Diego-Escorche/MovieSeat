@@ -5,7 +5,7 @@ import { createReservationRouter } from './routes/reservation.js';
 import { corsMiddleware } from './middlewares/cors.js';
 import bcrypt from 'bcrypt';
 import { connectDB, disconnectDB } from './models/mongodb/DBBroker.js';
-import cookieparser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import fs from 'fs';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -20,7 +20,7 @@ export const createApp = async ({
   const app = express();
   app.use(json());
   app.use(corsMiddleware({ acceptedOrigins: '*' }));
-  app.use(cookieparser());
+  app.use(cookieParser());
 
   app.disable('x-powered-by');
 
@@ -78,6 +78,9 @@ export const createApp = async ({
     );
   }
 
+  app.get('/debug/cookies', (req, res) => {
+    res.json({ cookies: req.cookies });
+  });
   app.use('/movies', createMovieRouter({ movieModel, userModel }));
   app.use('/auth', createUserRouter({ userModel }));
   app.use(

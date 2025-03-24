@@ -13,23 +13,23 @@ export const createUserRouter = ({ userModel }) => {
   userRouter.post('/register', userController.register);
   userRouter.delete(
     '/delete/:id',
-    authenticate({ userModel }),
+    authenticate({ userModel: userModel }),
     userController.delete,
   );
   userRouter.patch(
     '/update/:userId',
-    authenticate({ userModel }),
+    authenticate({ userModel: userModel }),
     userController.update,
   );
   userRouter.patch(
     '/promote/:userId',
-    authenticate({ userModel }),
+    authenticate({ userModel: userModel }),
     authorize('admin'),
     userController.promoteToAdmin,
   );
   userRouter.post(
     '/logout',
-    authenticate({ userModel }),
+    authenticate({ userModel: userModel }),
     userController.logout,
   );
 

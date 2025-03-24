@@ -48,4 +48,12 @@ export class UserModel {
       console.log(err);
     });
   }
+
+  static async findById({ id }) {
+    const user = await User.findById(id).lean();
+    if (!user) return null;
+
+    const { password, ...safeUser } = user; // strip sensitive fields
+    return safeUser;
+  }
 }

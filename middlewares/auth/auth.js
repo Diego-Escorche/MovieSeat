@@ -21,14 +21,15 @@ export const authenticate = ({ userModel }) => {
 
     try {
       const decoded = jwt.verify(token, secret);
-      const user = await userModel.findById(decoded.id);
+      const user = await userModel.findById({ id: decoded.id });
       if (!user) {
-        return res.status(401).json({ message: 'Unauthorized' });
+        return res.status(401).json({ message: 'The user does not exist' });
       }
+      console.log('Executed');
       req.user = user;
       next();
     } catch (error) {
-      res.status(401).json({ message: 'Unauthorized' });
+      res.status(401).json({ message: JSON.parse(error.message) });
     }
   };
 };

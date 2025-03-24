@@ -34,7 +34,7 @@ export class UserController {
     // Then it stores it in a cookie.
     res.cookie('access_token', token, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'Strict',
     });
 
@@ -134,7 +134,7 @@ export class UserController {
     res.json(updatedUser);
   });
 
-  logout = asyncHandler((req, res) => {
+  logout = asyncHandler(async (req, res) => {
     res.clearCookie('access_token');
     res.json({ message: 'User has logged out succesfully' });
   });

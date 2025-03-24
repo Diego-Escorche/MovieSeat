@@ -58,3 +58,8 @@ Content-Type: application/json
 
 ### Logout
 POST http://localhost:1234/auth/logout
+Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhlYzUxN2QzLTdkMmItNGMyNC1iMDA5LWIxZjUzNzE3ZDcxZCIsImlhdCI6MTc0Mjg0NjAyMiwiZXhwIjoxNzQyODQ5NjIyfQ.8V0h7a7vTrE94sz1Mr6goJlFwyWqax5swlLE4XSlrjs
+
+### USER
+GET http://localhost:1234/debug/cookies
+Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhlYzUxN2QzLTdkMmItNGMyNC1iMDA5LWIxZjUzNzE3ZDcxZCIsImlhdCI6MTc0Mjg0NDk3OCwiZXhwIjoxNzQyODQ4NTc4fQ.2flA-aiTfIq1Mrif1RPIt56psNQ-2OohKkE0oKnUMOs
