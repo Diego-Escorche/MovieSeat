@@ -1,5 +1,8 @@
 import jwt from 'jsonwebtoken';
-import JWT_SECRET from '../.env';
+import dotenv from 'dotenv';
+dotenv.config();
+
+const secret = process.env.JWT_SECRET;
 
 /**
  * Method that authenticates that the user is logged in
@@ -17,7 +20,7 @@ export const authenticate = ({ userModel }) => {
     }
 
     try {
-      const decoded = jwt.verify(token, JWT_SECRET);
+      const decoded = jwt.verify(token, secret);
       const user = await userModel.findById(decoded.id);
       if (!user) {
         return res.status(401).json({ message: 'Unauthorized' });

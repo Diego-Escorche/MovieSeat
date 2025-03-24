@@ -1,5 +1,5 @@
-import { Reservation } from '../models/mongodb/DBBroker';
-import { Movie } from '../models/mongodb/DBBroker';
+import { Reservation } from '../models/mongodb/DBBroker.js';
+import { Movie } from '../models/mongodb/DBBroker.js';
 import { FunctionModel } from './function.js';
 import { randomUUID } from 'crypto';
 

@@ -1,9 +1,12 @@
-import { validateUser, validatePartialUser } from '../schemas/userSchema';
+import { validateUser, validatePartialUser } from '../schemas/userSchema.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import JWT_SECRET from '../.env';
-import { asyncHandler } from '../utils.js';
+import dotenv from 'dotenv';
 
+import { asyncHandler } from '../utils.js';
+dotenv.config();
+
+const secret = process.env.JWT_SECRET;
 export class UserController {
   constructor({ userModel }) {
     this.userModel = userModel;
@@ -27,7 +30,7 @@ export class UserController {
     }
 
     // Creates a JWT Token with the users id and the secret to sign it.
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user._id }, secret, { expiresIn: '1h' });
     // Then it stores it in a cookie.
     res.cookie('access_token', token, {
       httpOnly: true,

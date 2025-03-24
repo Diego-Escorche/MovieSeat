@@ -19,12 +19,12 @@ const userSchema = z.object({
   role: z.array(z.enum(['user', 'admin'])).default(['user']),
 });
 
-export function validateMovie(object) {
+export function validateUser(object) {
   const { _id, ...data } = object;
-  return movieSchema.safeParse(data);
+  return userSchema.safeParse(data);
 }
 
-export function validatePartialMovie(object) {
+export function validatePartialUser(object) {
   const { _id, ...data } = object;
-  return movieSchema.partial().safeParse(data);
+  return userSchema.partial().safeParse(data);
 }

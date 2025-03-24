@@ -1,6 +1,6 @@
 import { Movie } from './mongodb/DBBroker.js';
 import { randomUUID } from 'crypto';
-import { functions } from './function.js';
+
 export class MovieModel {
   /**
    * Retrieves all movies from the database.
