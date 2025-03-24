@@ -25,51 +25,58 @@ export const createApp = async ({
   app.disable('x-powered-by');
 
   // Function to create the first admin user if the flag is set.
-  // const createInitialAdmin = async () => {
-  //   const email = process.env.ADMIN_EMAIL;
-  //   const username = process.env.ADMIN_USERNAME;
-  //   const password = process.env.ADMIN_PASSWORD;
+  const createInitialAdmin = async () => {
+    const email = process.env.ADMIN_EMAIL;
+    const username = process.env.ADMIN_USERNAME;
+    const password = process.env.ADMIN_PASSWORD;
 
-  //   if (!email || !username || !password) {
-  //     console.error('Admin credentials are not set in environment variables');
-  //     return;
-  //   }
+    if (!email || !username || !password) {
+      console.error('Admin credentials are not set in environment variables');
+      return;
+    }
 
-  //   let user = await userModel.login({ email, username, password });
-  //   if (!user) {
-  //     const hashedPassword = await bcrypt.hash(password, 10);
-  //     user = await userModel.register({
-  //       email: email,
-  //       username: username,
-  //       password: hashedPassword,
-  //       role: ['admin'],
-  //     });
-  //     console.log('Admin user created successfully');
-  //   } else if (
-  //     !user.role.includes('admin') &&
-  //     user.username === username &&
-  //     (await bcrypt.compare(password, user.password))
-  //   ) {
-  //     user.role.push('admin');
-  //     await userModel.update({ id: user._id, input: user });
-  //     console.log('User promoted to admin successfully');
-  //   }
-  // };
+    let user = await userModel.login({
+      email: email,
+      username: username,
+      password: password,
+    });
+    if (!user) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user = await userModel.register({
+        input: {
+          email: email,
+          username: username,
+          password: hashedPassword,
+          role: ['admin'],
+        },
+      });
+      console.log('Admin user created successfully');
+    } else if (
+      !user.role.includes('admin') &&
+      user.username === username &&
+      (await bcrypt.compare(password, user.password))
+    ) {
+      user.role.push('admin');
+      await userModel.update({ id: user._id, input: user });
+      console.log('User promoted to admin successfully');
+    }
+  };
 
   // Call the function to create the initial admin if the flag is set
-  // if (process.env.CREATE_INITIAL_ADMIN === 'true') {
-  //   createInitialAdmin().catch((error) => {
-  //     console.error('Error creating initial admin user:', error);
-  //   });
-  //   // Update the environment variable to false. First locally and then in the .env file
-  //   process.env.CREATE_INITIAL_ADMIN = 'false';
-  //   fs.writeFileSync(
-  //     '.env',
-  //     fs
-  //       .readFileSync('.env', 'utf8')
-  //       .replace('CREATE_INITIAL_ADMIN = true', 'CREATE_INITIAL_ADMIN = false'),
-  //   );
-  // }
+  if (process.env.CREATE_INITIAL_ADMIN === 'true') {
+    createInitialAdmin().catch((error) => {
+      console.error('Error creating initial admin user:', error);
+    });
+
+    // Update the environment variable to false. First locally and then in the .env file
+    process.env.CREATE_INITIAL_ADMIN = 'false';
+    fs.writeFileSync(
+      './.env',
+      fs
+        .readFileSync('./.env', 'utf8')
+        .replace('CREATE_INITIAL_ADMIN=true', 'CREATE_INITIAL_ADMIN=false'),
+    );
+  }
 
   app.use('/movies', createMovieRouter({ movieModel, userModel }));
   app.use('/auth', createUserRouter({ userModel }));
