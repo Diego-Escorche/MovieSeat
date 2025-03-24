@@ -7,7 +7,8 @@ import bcrypt from 'bcrypt';
 import { connectDB, disconnectDB } from './models/mongodb/DBBroker.js';
 import cookieparser from 'cookie-parser';
 import fs from 'fs';
-import 'dotenv/config';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export const createApp = async ({
   movieModel,
@@ -38,8 +39,8 @@ export const createApp = async ({
   //   if (!user) {
   //     const hashedPassword = await bcrypt.hash(password, 10);
   //     user = await userModel.register({
-  //       email,
-  //       username,
+  //       email: email,
+  //       username: username,
   //       password: hashedPassword,
   //       role: ['admin'],
   //     });
@@ -50,10 +51,16 @@ export const createApp = async ({
   //     (await bcrypt.compare(password, user.password))
   //   ) {
   //     user.role.push('admin');
-  //     await userModel.update({ id: user._id, user });
+  //     await userModel.update({ id: user._id, input: user });
   //     console.log('User promoted to admin successfully');
   //   }
+  // };
 
+  // Call the function to create the initial admin if the flag is set
+  // if (process.env.CREATE_INITIAL_ADMIN === 'true') {
+  //   createInitialAdmin().catch((error) => {
+  //     console.error('Error creating initial admin user:', error);
+  //   });
   //   // Update the environment variable to false. First locally and then in the .env file
   //   process.env.CREATE_INITIAL_ADMIN = 'false';
   //   fs.writeFileSync(
@@ -62,13 +69,6 @@ export const createApp = async ({
   //       .readFileSync('.env', 'utf8')
   //       .replace('CREATE_INITIAL_ADMIN = true', 'CREATE_INITIAL_ADMIN = false'),
   //   );
-  // };
-
-  // Call the function to create the initial admin if the flag is set
-  // if (process.env.CREATE_INITIAL_ADMIN === 'true') {
-  //   createInitialAdmin().catch((error) => {
-  //     console.error('Error creating initial admin user:', error);
-  //   });
   // }
 
   app.use('/movies', createMovieRouter({ movieModel, userModel }));

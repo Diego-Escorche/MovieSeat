@@ -41,43 +41,43 @@ export async function disconnectDB() {
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
-  _id: { type: String, default: randomUUID() },
-  username: { type: String, required: true, unique: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  _id: { type: String, unique: true },
+  username: { type: String, unique: true },
+  email: { type: String, unique: true },
+  password: { type: String },
   role: { type: [String], default: ['user'] },
 });
 
 const seatSchema = new Schema({
-  seatNumber: { type: String, required: true },
+  seatNumber: { type: String },
   isAvailable: { type: Boolean, default: true },
 });
 
 const functionSchema = new Schema({
-  date: { type: Date, required: true },
-  time: { type: String, required: true },
+  date: { type: Date },
+  time: { type: String },
   seats: [seatSchema],
 });
 
 const movieSchema = new Schema({
-  _id: { type: String, default: randomUUID(), unique: true, required: true },
-  title: { type: String, required: true },
-  year: { type: Number, required: true },
-  director: { type: String, required: true },
-  duration: { type: Number, required: true },
-  poster: { type: String, required: true },
-  genre: { type: [String], required: true },
-  rate: { type: Number, required: true },
+  _id: { type: String, unique: true },
+  title: { type: String },
+  year: { type: Number },
+  director: { type: String },
+  duration: { type: Number },
+  poster: { type: String },
+  genre: { type: [String] },
+  rate: { type: Number },
   functions: { type: [functionSchema], default: [] },
 });
 
 const reservationSchema = new Schema({
-  _id: { type: String, default: randomUUID(), unique: true, required: true },
-  user: { type: String, required: true },
-  movie: { type: String, required: true },
-  functionId: { type: String, required: true },
-  seats: [{ type: String, required: true }],
-  createdAt: { type: Date, required: true },
+  _id: { type: String, unique: true },
+  user: { type: String },
+  movie: { type: String },
+  functionId: { type: String },
+  seats: [{ type: String }],
+  createdAt: { type: Date },
 });
 
 export const Movie = mongoose.model('Movie', movieSchema);

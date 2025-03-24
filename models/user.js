@@ -8,10 +8,10 @@ export class UserModel {
    * @returns The user if it exists, otherwise null
    */
   static async login({ email, username }) {
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ email: email });
     // If a user was not found by email, it'll try to find it by username
     if (!user) {
-      user = await User.findOne({ username });
+      user = await User.findOne({ username: username });
     }
 
     return user;

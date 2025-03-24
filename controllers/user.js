@@ -69,7 +69,7 @@ export class UserController {
     req.body = {
       email: newUser.email,
       username: newUser.username,
-      password: newUser.password,
+      password: result.data.password,
       role: newUser.role,
     };
 

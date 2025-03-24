@@ -37,8 +37,9 @@ DELETE http://localhost:1234/movies/f49d7219-a809-491b-be5d-7186026dec84
 ### Register a new User.
 POST http://localhost:1234/auth/register
 Content-Type: application/json
+
 {
-    "username": "1",
+    "username": "123",
     "password": "12345678",
     "email": "loco@gmail.com"
 
@@ -47,8 +48,9 @@ Content-Type: application/json
 ### Login
 POST http://localhost:1234/auth/login
 Content-Type: application/json
+
 {
-    "username": "1",
+    "username": "123",
     "password": "12345678",
     "email": "loco@gmail.com"
 
