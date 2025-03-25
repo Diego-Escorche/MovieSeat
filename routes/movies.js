@@ -15,8 +15,12 @@ export const createMovieRouter = ({ movieModel, userModel }) => {
 
   // ------------------- RUTAS -------------------------
 
-  moviesRouter.get('/', movieController.getAll);
-  moviesRouter.get('/:id', movieController.getById);
+  moviesRouter.get('/', authenticate({ userModel }), movieController.getAll);
+  moviesRouter.get(
+    '/:id',
+    authenticate({ userModel }),
+    movieController.getById,
+  );
   moviesRouter.post(
     '/',
     authenticate({ userModel }),

@@ -1,37 +1,46 @@
+/**
+ * @fileoverview
+ * UserController handles all user-related operations, including:
+ * - Authentication (login/logout)
+ * - Registration
+ * - Profile update
+ * - User deletion
+ * - Role management
+ *
+ * It uses JWT for authentication and bcrypt for password encryption.
+ * User validation is handled using Zod schemas.
+ */
+
 import { validateUser, validatePartialUser } from '../schemas/userSchema.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
-
 import { asyncHandler } from '../utils.js';
+
 dotenv.config();
 
 const secret = process.env.JWT_SECRET;
+
 export class UserController {
   constructor({ userModel }) {
     this.userModel = userModel;
   }
 
   /**
-   * Logs in a user, encrypts the password and creates a JWT Token.
-   * @param {*} req
-   * @param {*} res
-   * @returns The user with a signed JWT Token in a cookie.
+   * Authenticates a user with email/username and password.
+   * Issues a signed JWT token stored in an HTTP-only cookie.
    */
   login = asyncHandler(async (req, res) => {
     const { email, username, password } = req.body;
     const user = await this.userModel.login({ email, username, password });
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Checks the password with the one stored on the database
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid password' });
     }
 
-    // Creates a JWT Token with the users id and the secret to sign it.
     const token = jwt.sign({ id: user._id }, secret, { expiresIn: '1h' });
-    // Then it stores it in a cookie.
     res.cookie('access_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -42,10 +51,8 @@ export class UserController {
   });
 
   /**
-   * Creates a new user and logs it in.
-   * @param {*} req
-   * @param {*} res
-   * @returns The new user that has been created.
+   * Registers a new user after validating and hashing their password.
+   * Automatically logs in the user upon successful registration.
    */
   register = asyncHandler(async (req, res) => {
     const result = validateUser(req.body);
@@ -54,7 +61,6 @@ export class UserController {
         .status(400)
         .json({ message: JSON.parse(result.error.message) });
 
-    // The password will be encrypted for security reasons.
     const hashedPassword = await bcrypt.hash(result.data.password, 10);
     const newUser = await this.userModel.register({
       input: {
@@ -73,15 +79,12 @@ export class UserController {
       role: newUser.role,
     };
 
-    // Calls the login method to immediately log in the user after registering.
     this.login(req, res);
   });
 
   /**
-   * Updates some of the user's information.
-   * @param {*} req
-   * @param {*} res
-   * @returns
+   * Updates user information such as email or password.
+   * Password is hashed before saving if provided.
    */
   update = asyncHandler(async (req, res) => {
     const { userId } = req.params;
@@ -108,10 +111,7 @@ export class UserController {
   });
 
   /**
-   * Deletes a user after making sure that the user is logged in.
-   * @param {*} req
-   * @param {*} res
-   * @returns A message that the user has been deleted successfully.
+   * Deletes a user account based on their ID.
    */
   delete = asyncHandler(async (req, res) => {
     const { id } = req.params;
@@ -122,10 +122,7 @@ export class UserController {
   });
 
   /**
-   * Promotes a user to an admin role.
-   * @param {*} req
-   * @param {*} res
-   * @returns The updated user with admin role.
+   * Assigns admin role to a user.
    */
   promoteToAdmin = asyncHandler(async (req, res) => {
     const { userId } = req.params;
@@ -142,6 +139,9 @@ export class UserController {
     res.json(updatedUser);
   });
 
+  /**
+   * Logs out the current user by clearing the access token cookie.
+   */
   logout = asyncHandler(async (req, res) => {
     res.clearCookie('access_token');
     res.json({ message: 'User has logged out succesfully' });
