@@ -75,7 +75,7 @@ export class ReservationModel {
         'functions._id': functionId,
       },
       {
-        $set: { 'functions.$[].seats.$[].isAvailable': true },
+        $set: { 'functions.$[].seats.$[seat].isAvailable': true },
       },
       {
         arrayFilters: [{ 'seat.seatNumber': { $in: seats } }],

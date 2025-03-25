@@ -50,16 +50,26 @@ POST http://localhost:1234/auth/login
 Content-Type: application/json
 
 {
-    "username": "123",
-    "password": "12345678",
-    "email": "loco@gmail.com"
+    "username": "solerus",
+    "email": "solerusoficial@gmail.com",
+    "password": "testingWebsite23"
 
 }
+
+### Update the Users data
+PATCH http://localhost:1234/auth/update/8ec517d3-7d2b-4c24-b009-b1f53717d71d
+Content-Type: application/json
+Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhlYzUxN2QzLTdkMmItNGMyNC1iMDA5LWIxZjUzNzE3ZDcxZCIsImlhdCI6MTc0MjkwNTUxMiwiZXhwIjoxNzQyOTA5MTEyfQ.DTrcf4Si664ZthpgkNI99RLMMr03_l5PvPnMwHMieDw
+
+
+{
+    "password": "abcdefghi"
+}
+
+### PROMOTE USER.
+PATCH http://localhost:1234/auth/promote/8ec517d3-7d2b-4c24-b009-b1f53717d71d
+Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZiZjZlYWU4LTJlYmMtNDhiZi1iNjE2LWVhYThkMjM3ZWQ4NiIsImlhdCI6MTc0MjkwNjAyMCwiZXhwIjoxNzQyOTA5NjIwfQ.uY6cHYuPwvBNahBWEPwRISjY97509fI59IDczVLPOxw
 
 ### Logout
 POST http://localhost:1234/auth/logout
 Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhlYzUxN2QzLTdkMmItNGMyNC1iMDA5LWIxZjUzNzE3ZDcxZCIsImlhdCI6MTc0Mjg0NjAyMiwiZXhwIjoxNzQyODQ5NjIyfQ.8V0h7a7vTrE94sz1Mr6goJlFwyWqax5swlLE4XSlrjs
-
-### USER
-GET http://localhost:1234/debug/cookies
-Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhlYzUxN2QzLTdkMmItNGMyNC1iMDA5LWIxZjUzNzE3ZDcxZCIsImlhdCI6MTc0Mjg0NDk3OCwiZXhwIjoxNzQyODQ4NTc4fQ.2flA-aiTfIq1Mrif1RPIt56psNQ-2OohKkE0oKnUMOs

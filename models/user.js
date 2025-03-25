@@ -9,7 +9,6 @@ export class UserModel {
    */
   static async login({ email, username }) {
     let user = await User.findOne({ email: email });
-    // If a user was not found by email, it'll try to find it by username
     if (!user) {
       user = await User.findOne({ username: username });
     }
@@ -38,13 +37,13 @@ export class UserModel {
    * @returns The updated user if it exists, otherwise null.
    */
   static async update({ id, input }) {
-    return await User.findByIdAndUpdate({ _id: id }, input, {
+    return await User.findByIdAndUpdate(id, input, {
       new: true,
     }).catch((err) => console.log(err));
   }
 
   static async delete({ id }) {
-    return await User.findByIdAndDelete({ _id: id }).catch((err) => {
+    return await User.findByIdAndDelete(id).catch((err) => {
       console.log(err);
     });
   }

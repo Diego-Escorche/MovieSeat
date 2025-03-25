@@ -86,12 +86,20 @@ export class UserController {
   update = asyncHandler(async (req, res) => {
     const { userId } = req.params;
     const check = validatePartialUser(req.body);
+
     if (check.error)
       return res.status(400).json({ message: JSON.parse(check.error.message) });
 
+    let password;
+    if (check.data.password)
+      password = await bcrypt.hash(check.data.password, 10);
+
     const updatedUser = await this.userModel.update({
       id: userId,
-      input: check.data,
+      input: {
+        ...(check.data.email && { email: check.data.email }),
+        ...(password && { password: password }),
+      },
     });
 
     if (updatedUser) return res.json(updatedUser);
@@ -124,7 +132,7 @@ export class UserController {
 
     const updatedUser = await this.userModel.update({
       id: userId,
-      user: { role: ['admin'] },
+      input: { role: ['admin'] },
     });
 
     if (!updatedUser) {

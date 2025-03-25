@@ -16,15 +16,15 @@ export const createApp = async ({
   reservationModel,
 }) => {
   await connectDB();
-
   const app = express();
+
   app.use(json());
   app.use(corsMiddleware({ acceptedOrigins: '*' }));
   app.use(cookieParser());
 
   app.disable('x-powered-by');
 
-  // Function to create the first admin user if the flag is set.
+  // Function to create the first admin.
   const createInitialAdmin = async () => {
     const email = process.env.ADMIN_EMAIL;
     const username = process.env.ADMIN_USERNAME;
@@ -62,7 +62,7 @@ export const createApp = async ({
     }
   };
 
-  // Call the function to create the initial admin if the flag is set
+  // Call the function to create the initial admin if the flag is set as true.
   if (process.env.CREATE_INITIAL_ADMIN === 'true') {
     createInitialAdmin().catch((error) => {
       console.error('Error creating initial admin user:', error);
@@ -78,9 +78,6 @@ export const createApp = async ({
     );
   }
 
-  app.get('/debug/cookies', (req, res) => {
-    res.json({ cookies: req.cookies });
-  });
   app.use('/movies', createMovieRouter({ movieModel, userModel }));
   app.use('/auth', createUserRouter({ userModel }));
   app.use(
