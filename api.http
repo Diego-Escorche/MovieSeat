@@ -73,3 +73,21 @@ Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZiZjZlYWU4LT
 ### Logout
 POST http://localhost:1234/auth/logout
 Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhlYzUxN2QzLTdkMmItNGMyNC1iMDA5LWIxZjUzNzE3ZDcxZCIsImlhdCI6MTc0Mjg0NjAyMiwiZXhwIjoxNzQyODQ5NjIyfQ.8V0h7a7vTrE94sz1Mr6goJlFwyWqax5swlLE4XSlrjs
+
+### ---------------------------------------
+### RESERVATIONS
+
+### Create a reservation
+POST http://localhost:1234/reservations/
+
+### Get all the reservations.
+GET http://localhost:1234/reservations/
+
+### Get a specific user reservations.
+GET http://localhost:1234/reservations/:userId
+
+### Update a reservation.
+PATCH http://localhost:1234/reservations/:id
+
+### Delete a reservation.
+DELETE http://localhost:1234/reservations/:id

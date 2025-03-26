@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import { ServerApiVersion } from 'mongodb';
 import dotenv from 'dotenv';
-import { randomUUID } from 'crypto';
 
 dotenv.config();
 
