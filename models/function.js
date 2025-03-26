@@ -12,10 +12,9 @@ export class FunctionModel {
     if (!movie) return null;
 
     // Generate all the seats for the function
-    const { date, time } = input;
+    const { datetime } = input;
     movie.functions.push({
-      date: date,
-      time: time,
+      datetime: datetime,
       seats: generateSeats(),
     });
 

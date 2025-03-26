@@ -53,8 +53,7 @@ const seatSchema = new Schema({
 });
 
 const functionSchema = new Schema({
-  date: { type: Date },
-  time: { type: String },
+  datetime: { type: Date, required: true },
   seats: [seatSchema],
 });
 
@@ -76,7 +75,7 @@ const reservationSchema = new Schema({
   movie: { type: String },
   functionId: { type: String },
   seats: [{ type: String }],
-  createdAt: { type: Date },
+  createdAt: { type: Date, default: Date.now() },
 });
 
 export const Movie = mongoose.model('Movie', movieSchema);
