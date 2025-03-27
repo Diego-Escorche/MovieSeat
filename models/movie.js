@@ -57,9 +57,21 @@ export class MovieModel {
    * @returns The updated movie object if it was updated, otherwise null.
    */
   static async update({ id, input }) {
-    return await Movie.findByIdAndUpdate(id, input, {
+    const { updates, ...movieFields } = input;
+
+    let updatedMovie = await Movie.findByIdAndUpdate(id, movieFields, {
       new: true,
     }).catch((err) => console.log(err));
+    if (!updatedMovie) return null;
+
+    if (updates?.length) {
+      updatedMovie = await this.updateFunction({
+        movie: updatedMovie,
+        updates: updates,
+      });
+    }
+
+    return updatedMovie;
   }
 
   // ----------- FUNCTION METHODS -------------
@@ -90,18 +102,20 @@ export class MovieModel {
 
   /**
    *
-   * @param {*} param0 An Object that contains the movieId, functionId and the input data.
+   * @param {*} param0 An Object that contains the movie, and the datetime updates on the update parameter.
    * @returns An updated array with the function that was updated.
    */
-  static async updateFunction({ movieId, functionId, input }) {
-    const movie = await Movie.findById(movieId);
-    if (!movie) return null;
+  static async updateFunction({ movie, updates }) {
+    if (!movie || !Array.isArray(updates)) return null;
 
-    const func = movie.functions.id(functionId);
-    if (!func) return null;
+    for (const { datetime, newDatetime } of updates) {
+      const target = movie.functions.find(
+        (f) => f.datetime.getTime() === new Date(datetime).getTime(),
+      );
 
-    if (input.datetime) {
-      func.datetime = new Date(input.datetime); // ✅ safe update
+      if (target && newDatetime) {
+        target.datetime = new Date(newDatetime);
+      }
     }
 
     await movie.save();

@@ -33,6 +33,7 @@ Content-Type: application/json
 DELETE http://localhost:1234/movies/f49d7219-a809-491b-be5d-7186026dec84
 
 ### ---------------------------------------
+### USER
 
 ### Register a new User.
 POST http://localhost:1234/auth/register

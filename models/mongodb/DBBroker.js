@@ -53,7 +53,7 @@ const seatSchema = new Schema({
 });
 
 const functionSchema = new Schema({
-  datetime: { type: Date, required: true },
+  datetime: { type: Date, required: true, unique: true },
   seats: [seatSchema],
 });
 
