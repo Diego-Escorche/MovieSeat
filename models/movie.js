@@ -61,4 +61,120 @@ export class MovieModel {
       new: true,
     }).catch((err) => console.log(err));
   }
+
+  // ----------- FUNCTION METHODS -------------
+  /**
+   *
+   * @param {*} param0 An object that contains the movieId and the input data.
+   * The input format needs to be like this: 
+   * [
+      { "datetime": "2024-03-25T21:00:00Z" },
+      { "datetime": "2024-03-26T01:30:00Z" }
+     ]
+   * @returns The updated array with the new function.
+   */
+  static async addFunction({ movieId, input }) {
+    const movie = await Movie.findById(movieId);
+    if (!movie) return null;
+
+    input.forEach(({ datetime }) => {
+      movie.functions.push({
+        datetime: new Date(datetime),
+        seats: generateSeats(),
+      });
+    });
+
+    await movie.save();
+    return movie;
+  }
+
+  /**
+   *
+   * @param {*} param0 An Object that contains the movieId, functionId and the input data.
+   * @returns An updated array with the function that was updated.
+   */
+  static async updateFunction({ movieId, functionId, input }) {
+    const movie = await Movie.findById(movieId);
+    if (!movie) return null;
+
+    const func = movie.functions.id(functionId);
+    if (!func) return null;
+
+    if (input.datetime) {
+      func.datetime = new Date(input.datetime); // ✅ safe update
+    }
+
+    await movie.save();
+    return movie;
+  }
+
+  /**
+   *
+   * @param {*} param0 An Object that contains the movieId and the functionId.
+   * @returns An updated array without the function that was deleted.
+   */
+  static async deleteFunction({ movieId, functionId }) {
+    const movie = await Movie.findById(movieId);
+    if (!movie) return null;
+
+    movie.functions = movie.functions.filter(
+      (f) => f._id.toString() !== functionId,
+    );
+
+    await movie.save();
+    return movie;
+  }
+
+  /**
+   *
+   * @param {*} param0 An Object with the movieId and functionId.
+   * @returns An array with all the available seats of a function
+   */
+  static async getAvailableSeats({ movieId, functionId }) {
+    const movie = await Movie.findById(movieId);
+    if (!movie) return null;
+
+    const func = movie.functions.id(functionId);
+    if (!func) return null;
+
+    const availableSeats = func.seats.filter((seat) => seat.isAvailable);
+    return availableSeats;
+  }
+
+  /**
+   * Reserves a seat only if the function
+   * is found and if the seat is available.
+   * @param {*} param0 Object containing the ids of the movie, function and the seats.
+   * @returns The updated seat if all the conditions where met, otherwise it returns a null.
+   */
+  static async reserveSeat({ movieId, functionId, seats }) {
+    const seatUpdated = await Movie.findOneAndUpdate(
+      {
+        _id: movieId,
+        'functions._id': functionId,
+        $and: seats.map((seatNumber) => ({
+          'functions.seats': {
+            $elemMatch: {
+              seatNumber,
+              isAvailable: true,
+            },
+          },
+        })),
+      },
+      {
+        $set: {
+          'functions.$[func].seats.$[seat].isAvailable': false,
+        },
+      },
+      {
+        arrayFilters: [
+          { 'func._id': functionId },
+          { 'seat.seatNumber': { $in: seats } },
+        ],
+        new: true,
+      },
+    );
+
+    return seatUpdated;
+  }
 }

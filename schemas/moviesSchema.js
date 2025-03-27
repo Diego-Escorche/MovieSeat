@@ -38,14 +38,6 @@ const movieSchema = z.object({
           message: 'Datetime must be in ISO 8601 format',
           required_error: 'Datetime is required',
         }),
-        seats: z.array(
-          z
-            .object({
-              seatNumber: z.string(),
-              isAvailable: z.boolean(),
-            })
-            .default(generateSeats()),
-        ),
       }),
     )
     .optional(),
