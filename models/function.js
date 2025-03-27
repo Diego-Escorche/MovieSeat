@@ -1,6 +1,5 @@
 import { Movie } from './mongodb/DBBroker.js';
 import { generateSeats } from '../utils.js';
-
 export class FunctionModel {
   /**
    *
@@ -14,7 +13,7 @@ export class FunctionModel {
     // Generate all the seats for the function
     const { datetime } = input;
     movie.functions.push({
-      datetime: datetime,
+      datetime: new Date(datetime),
       seats: generateSeats(),
     });
 
@@ -84,11 +83,27 @@ export class FunctionModel {
       {
         _id: movieId,
         'functions._id': functionId,
-        'functions.seats.seatNumber': { $all: seats },
-        'functions.seats.isAvailable': true,
+        $and: seats.map((seatNumber) => ({
+          'functions.seats': {
+            $elemMatch: {
+              seatNumber,
+              isAvailable: true,
+            },
+          },
+        })),
       },
-      { $set: { 'functions.$[].seats.$[seat].isAvailable': false } },
-      { arrayFilters: [{ 'seat.seatNumber': { $in: seats } }], new: true },
+      {
+        $set: {
+          'functions.$[func].seats.$[seat].isAvailable': false,
+        },
+      },
+      {
+        arrayFilters: [
+          { 'func._id': functionId },
+          { 'seat.seatNumber': { $in: seats } },
+        ],
+        new: true,
+      },
     );
 
     return seatUpdated;

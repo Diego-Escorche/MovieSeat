@@ -31,6 +31,24 @@ const movieSchema = z.object({
       },
     ),
   ),
+  functions: z
+    .array(
+      z.object({
+        datetime: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, {
+          message: 'Datetime must be in ISO 8601 format',
+          required_error: 'Datetime is required',
+        }),
+        seats: z.array(
+          z
+            .object({
+              seatNumber: z.string(),
+              isAvailable: z.boolean(),
+            })
+            .default(generateSeats()),
+        ),
+      }),
+    )
+    .optional(),
 });
 
 export function validateMovie(object) {
