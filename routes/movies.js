@@ -24,19 +24,23 @@ export const createMovieRouter = ({ movieModel, userModel }) => {
   moviesRouter.get(
     '/:id/functions/:functionId/seats',
     authenticate({ userModel }),
-    movieController.getAvailableSeats,
+    movieController.listAvailableSeats,
   );
   moviesRouter.get(
     '/:id/functions',
     authenticate({ userModel }),
     movieController.getAllFunctions,
   );
-
   moviesRouter.post(
     '/',
     authenticate({ userModel }),
     authorize('admin'),
     movieController.create,
+  );
+  moviesRouter.post(
+    '/:id/reserve',
+    authenticate({ userModel }),
+    movieController.reserveSeats,
   );
   moviesRouter.post(
     '/:id/functions',

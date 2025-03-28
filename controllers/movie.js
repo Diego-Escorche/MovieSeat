@@ -15,6 +15,7 @@ export class MovieController {
     this.movieModel = movieModel;
   }
 
+  //--------------------- MOVIES ---------------------
   /**
    * Gets all movies or filters by genre if provided.
    * @route GET /movies
@@ -126,6 +127,8 @@ export class MovieController {
     return res.json(updatedMovie);
   });
 
+  // ------------------ FUNCTIONS -----------------------
+
   /**
    * Gets all functions (showtimes) for a specific movie.
    * @route GET /movies/:id/functions
@@ -200,12 +203,13 @@ export class MovieController {
     return res.json(updatedMovie);
   });
 
+  // ------------------- SEATS --------------------------
   /**
    * Retrieves available seats from a specific function.
    * @route GET /movies/:id/functions/:functionId/seats
    * @body {string} functionId
    */
-  getAvailableSeats = asyncHandler(async (req, res) => {
+  listAvailableSeats = asyncHandler(async (req, res) => {
     const { id, functionId } = req.params;
     if (!id || !functionId)
       return res.status(400).json({ message: 'Invalid Syntaxis' });
@@ -229,7 +233,7 @@ export class MovieController {
    * @route POST /movies/:id/reserve
    * @body {string} functionId, {string[]} seats
    */
-  reserveSeat = asyncHandler(async (req, res) => {
+  reserveSeats = asyncHandler(async (req, res) => {
     const { id } = req.params;
     if (!id) return res.status(400).json({ message: 'Invalid Syntaxis' });
 
