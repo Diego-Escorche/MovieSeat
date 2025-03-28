@@ -80,6 +80,17 @@ export class MovieModel {
   }
 
   /**
+   * Retrieves all functions (showtimes) of a specific movie.
+   * @param {*} param0 Object containing the movieId
+   * @returns An array of functions if the movie exists, otherwise null
+   */
+  static async getFunctions({ movieId }) {
+    const movie = await Movie.findById(movieId);
+    if (!movie) return null;
+    return movie.functions;
+  }
+
+  /**
    * Adds new functions (showtimes) to an existing movie.
    * @param {*} param0 Object containing the movieId and an array of function objects with datetime.
    * @returns {Promise<Object|null>} The updated movie or null.
@@ -160,7 +171,7 @@ export class MovieModel {
    * @returns {Promise<Object|null>} The updated movie document or null.
    */
   static async reserveSeat({ movieId, functionId, seats }) {
-    const seatUpdated = await Movie.findOneAndUpdate(
+    return await Movie.findOneAndUpdate(
       {
         _id: movieId,
         functions: {
@@ -190,7 +201,5 @@ export class MovieModel {
         new: true,
       },
     );
-
-    return seatUpdated;
   }
 }
