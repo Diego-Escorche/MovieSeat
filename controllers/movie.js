@@ -39,15 +39,17 @@ export class MovieController {
         .json({ message: JSON.parse(result.error.message) });
     }
 
-    let newMovie = await this.movieModel.create({ input: result.data });
+    const { functions, ...movieData } = result.data;
+
+    let newMovie = await this.movieModel.create({ input: movieData });
     if (!newMovie) {
       return res.status(500).json({ message: 'Movie could not be created' });
     }
 
-    if (result.data.functions) {
+    if (functions?.length) {
       newMovie = await this.movieModel.addFunction({
         movieId: newMovie._id,
-        input: result.data.functions,
+        input: functions,
       });
 
       if (!newMovie) {

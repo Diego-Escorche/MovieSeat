@@ -165,15 +165,19 @@ export class MovieModel {
     const seatUpdated = await Movie.findOneAndUpdate(
       {
         _id: movieId,
-        'functions._id': functionId,
-        $and: seats.map((seatNumber) => ({
-          'functions.seats': {
-            $elemMatch: {
-              seatNumber,
-              isAvailable: true,
+        functions: {
+          $elemMatch: {
+            _id: functionId,
+            seats: {
+              $all: seats.map((seatNumber) => ({
+                $elemMatch: {
+                  seatNumber,
+                  isAvailable: true,
+                },
+              })),
             },
           },
-        })),
+        },
       },
       {
         $set: {
