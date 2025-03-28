@@ -97,4 +97,79 @@ export class MovieController {
 
     return res.json(updatedMovie);
   });
+
+  addFunction = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ message: 'Invalid Syntaxis' });
+
+    const result = validatePartialMovie(req.body);
+    if (!result.success) {
+      return res
+        .status(400)
+        .json({ message: JSON.parse(result.error.message) });
+    }
+    const { functions } = result.data;
+    if (!functions?.length) {
+      return res.status(400).json({ message: 'Function is required' });
+    }
+
+    const updatedMovie = await this.movieModel.addFunction({
+      movieId: id,
+      input: functions,
+    });
+
+    if (!updatedMovie) {
+      return res
+        .status(404)
+        .json({ message: 'The function could not be added' });
+    }
+
+    return res.json(updatedMovie);
+  });
+
+  deleteFunction = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ message: 'Invalid Syntaxis' });
+
+    const { functionId } = req.body;
+    if (!functionId) {
+      return res.status(400).json({ message: 'FunctionId is required' });
+    }
+
+    const updatedMovie = await this.movieModel.deleteFunction({
+      movieId: id,
+      functionId: functionId,
+    });
+
+    if (!updatedMovie) {
+      return res
+        .status(404)
+        .json({ message: 'The function could not be deleted' });
+    }
+
+    return res.json(updatedMovie);
+  });
+
+  getAvailableSeats = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ message: 'Invalid Syntaxis' });
+
+    const { functionId } = req.body;
+    if (!functionId) {
+      return res.status(400).json({ message: 'FunctionId is required' });
+    }
+
+    const availableSeats = await this.movieModel.getAvailableSeats({
+      movieId: id,
+      functionId: functionId,
+    });
+
+    if (!availableSeats) {
+      return res
+        .status(404)
+        .json({ message: 'The function could not be found' });
+    }
+
+    return res.json(availableSeats);
+  });
 }

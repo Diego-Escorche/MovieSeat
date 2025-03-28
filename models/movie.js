@@ -1,11 +1,17 @@
+/**
+ * @fileoverview MovieModel handles all database operations related to movies.
+ * This includes creating, reading, updating, and deleting movies, as well as managing
+ * nested movie functions (showtimes), seat availability, and reservation logic.
+ */
+
 import { Movie } from './mongodb/DBBroker.js';
 import { randomUUID } from 'crypto';
 
 export class MovieModel {
   /**
-   * Retrieves all movies from the database.
-   * @param {*} param0 Object that contains the genre to filter the movies.
-   * @returns An array with all the movies
+   * Retrieves all movies, optionally filtering by genre (case-insensitive).
+   * @param {*} param0 Object containing optional genre string to filter.
+   * @returns {Promise<Array>} A list of matching movies.
    */
   static async getAll({ genre }) {
     const query = genre
@@ -18,18 +24,18 @@ export class MovieModel {
   }
 
   /**
-   * Looks for a movie by its id.
-   * @param {*} param0 Object that contains the movie id.
-   * @returns The movie object if it exists, otherwise null.
+   * Retrieves a movie by its unique ID.
+   * @param {*} param0 Object containing the movie ID.
+   * @returns {Promise<Object|null>} The found movie or null.
    */
   static async getById({ id }) {
     return await Movie.findById(id).catch((err) => console.log(err));
   }
 
   /**
-   * Stores a user in the database and creates an id.
-   * @param {*} param0 Object that contains the movie data.
-   * @returns The movie object if it was created, otherwise null.
+   * Creates and stores a new movie in the database.
+   * @param {*} param0 Object containing the movie data.
+   * @returns {Promise<Object|null>} The newly created movie or null.
    */
   static async create({ input }) {
     const newMovie = new Movie({
@@ -38,23 +44,22 @@ export class MovieModel {
     });
 
     await newMovie.save().catch((err) => console.log(err));
-
     return newMovie;
   }
 
   /**
-   * Searches for a movie by its id and deletes it.
-   * @param {*} param0 Object containing the movie id.
-   * @returns True if the movie was deleted, otherwise null.
+   * Deletes a movie by its ID.
+   * @param {*} param0 Object containing the movie ID.
+   * @returns {Promise<Object|null>} The deleted movie or null.
    */
   static async delete({ id }) {
     return await Movie.findByIdAndDelete(id).catch((err) => console.log(err));
   }
 
   /**
-   * Looks a movie by its id, updates it and returns the updated movie.
-   * @param {*} param0 Object that contains the movie id and its data.
-   * @returns The updated movie object if it was updated, otherwise null.
+   * Updates a movie by its ID, optionally updating nested functions as well.
+   * @param {*} param0 Object containing the movie ID and input data.
+   * @returns {Promise<Object|null>} The updated movie or null.
    */
   static async update({ id, input }) {
     const { updates, ...movieFields } = input;
@@ -74,16 +79,10 @@ export class MovieModel {
     return updatedMovie;
   }
 
-  // ----------- FUNCTION METHODS -------------
   /**
-   *
-   * @param {*} param0 An object that contains the movieId and the input data.
-   * The input format needs to be like this: 
-   * [
-      { "datetime": "2024-03-25T21:00:00Z" },
-      { "datetime": "2024-03-26T01:30:00Z" }
-     ]
-   * @returns The updated array with the new function.
+   * Adds new functions (showtimes) to an existing movie.
+   * @param {*} param0 Object containing the movieId and an array of function objects with datetime.
+   * @returns {Promise<Object|null>} The updated movie or null.
    */
   static async addFunction({ movieId, input }) {
     const movie = await Movie.findById(movieId);
@@ -101,9 +100,9 @@ export class MovieModel {
   }
 
   /**
-   *
-   * @param {*} param0 An Object that contains the movie, and the datetime updates on the update parameter.
-   * @returns An updated array with the function that was updated.
+   * Updates the datetime of existing functions for a movie.
+   * @param {*} param0 Object containing the movie and an array of updates: { datetime, newDatetime }.
+   * @returns {Promise<Object|null>} The updated movie or null.
    */
   static async updateFunction({ movie, updates }) {
     if (!movie || !Array.isArray(updates)) return null;
@@ -123,9 +122,9 @@ export class MovieModel {
   }
 
   /**
-   *
-   * @param {*} param0 An Object that contains the movieId and the functionId.
-   * @returns An updated array without the function that was deleted.
+   * Deletes a specific function (showtime) from a movie.
+   * @param {*} param0 Object containing the movieId and functionId.
+   * @returns {Promise<Object|null>} The updated movie or null.
    */
   static async deleteFunction({ movieId, functionId }) {
     const movie = await Movie.findById(movieId);
@@ -140,9 +139,9 @@ export class MovieModel {
   }
 
   /**
-   *
-   * @param {*} param0 An Object with the movieId and functionId.
-   * @returns An array with all the available seats of a function
+   * Retrieves all available seats for a specific function.
+   * @param {*} param0 Object containing the movieId and functionId.
+   * @returns {Promise<Array|null>} List of available seats or null.
    */
   static async getAvailableSeats({ movieId, functionId }) {
     const movie = await Movie.findById(movieId);
@@ -156,10 +155,9 @@ export class MovieModel {
   }
 
   /**
-   * Reserves a seat only if the function
-   * is found and if the seat is available.
-   * @param {*} param0 Object containing the ids of the movie, function and the seats.
-   * @returns The updated seat if all the conditions where met, otherwise it returns a null.
+   * Reserves a group of seats in a function, only if they are all available.
+   * @param {*} param0 Object containing movieId, functionId, and an array of seat numbers.
+   * @returns {Promise<Object|null>} The updated movie document or null.
    */
   static async reserveSeat({ movieId, functionId, seats }) {
     const seatUpdated = await Movie.findOneAndUpdate(
