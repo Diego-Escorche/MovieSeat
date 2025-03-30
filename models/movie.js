@@ -6,6 +6,7 @@
 
 import { Movie } from './mongodb/DBBroker.js';
 import { randomUUID } from 'crypto';
+import { generateSeats } from '../utils.js';
 
 export class MovieModel {
   /**

@@ -137,7 +137,7 @@ export class MovieController {
     const { id } = req.params;
     if (!id) return res.status(400).json({ message: 'Invalid Syntaxis' });
 
-    const functions = await this.movieModel.getAllFunctions({ movieId: id });
+    const functions = await this.movieModel.getFunctions({ movieId: id });
 
     if (!functions) {
       return res.status(404).json({ message: 'Movie not found' });

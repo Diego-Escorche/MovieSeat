@@ -32,6 +32,37 @@ Content-Type: application/json
 ### To delete a movie
 DELETE http://localhost:1234/movies/f49d7219-a809-491b-be5d-7186026dec84
 
+### ----------------------------------------
+### FUNCTIONS
+
+### Get all the functions of a movie.
+GET http://localhost:1234/movies/dcdd0fad-a94c-4810-8acc-5f108d3b18c3/functions
+
+### Add functions to a movie
+POST http://localhost:1234/movies/dcdd0fad-a94c-4810-8acc-5f108d3b18c3/functions
+Content-Type: application/json
+
+{
+  "functions": [
+    { "datetime": "2024-04-02T20:00:00Z" }
+  ]
+}
+
+### Delete a function from a movie
+DELETE http://localhost:1234/movies/dcdd0fad-a94c-4810-8acc-5f108d3b18c3/functions/67e9c8a44532c1dbefc20809
+
+### Get available seats for a function
+GET http://localhost:1234/movies/dcdd0fad-a94c-4810-8acc-5f108d3b18c3/functions/67e9cc524532c1dbefc20c08/seats
+
+### Reserve seats for a function
+POST http://localhost:1234/movies/dcdd0fad-a94c-4810-8acc-5f108d3b18c3/reserve
+Content-Type: application/json
+
+{
+  "functionId": "67e9cc524532c1dbefc20c08",
+  "seats": ["A1", "A2", "B3"]
+}
+
 ### ---------------------------------------
 ### USER
 

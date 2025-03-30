@@ -1,6 +1,6 @@
 import { Reservation } from '../models/mongodb/DBBroker.js';
 import { Movie } from '../models/mongodb/DBBroker.js';
-import { FunctionModel } from './function.js';
+import { MovieModel } from './movie.js';
 import { randomUUID } from 'crypto';
 
 export class ReservationModel {
@@ -27,7 +27,7 @@ export class ReservationModel {
    */
   static async create({ input }) {
     const { movie, functionId, seats } = input;
-    const reservedSeats = await new FunctionModel.reserveSeat({
+    const reservedSeats = await new MovieModel.reserveSeat({
       movieId: movie,
       functionId: functionId,
       seats: seats,
