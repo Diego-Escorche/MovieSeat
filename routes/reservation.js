@@ -19,28 +19,28 @@ export const createReservationRouter = ({
 
   reservationRouter.get(
     '/',
-    authenticate({ userModel }),
-    authorize('admin'),
+    // authenticate({ userModel }),
+    // authorize('admin'),
     reservationController.getAll,
   );
   reservationRouter.get(
     '/:userId',
-    authenticate({ userModel }),
+    // authenticate({ userModel }),
     reservationController.getByUserId,
   );
   reservationRouter.post(
     '/',
-    authenticate({ userModel }),
+    // authenticate({ userModel }),
     reservationController.create,
   );
-  reservationRouter.patch(
-    '/:id',
-    authenticate({ userModel }),
-    reservationController.update,
-  );
+  // reservationRouter.patch(
+  //   '/:id',
+  //   // authenticate({ userModel }),
+  //   reservationController.update,
+  // );
   reservationRouter.delete(
-    '/:id',
-    authenticate({ userModel }),
+    '/:id/:functionId',
+    // authenticate({ userModel }),
     reservationController.delete,
   );
 

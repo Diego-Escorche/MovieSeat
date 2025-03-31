@@ -109,17 +109,22 @@ Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhlYzUxN2QzLT
 ### ---------------------------------------
 ### RESERVATIONS
 
-### Create a reservation
-POST http://localhost:1234/reservations/
-
 ### Get all the reservations.
 GET http://localhost:1234/reservations/
 
 ### Get a specific user reservations.
-GET http://localhost:1234/reservations/:userId
+GET http://localhost:1234/reservations/8ec517d3-7d2b-4c24-b009-b1f53717d71d
 
-### Update a reservation.
-PATCH http://localhost:1234/reservations/:id
+### Create a reservation
+POST http://localhost:1234/reservations/
+Content-Type: application/json
+
+{
+  "user": "8ec517d3-7d2b-4c24-b009-b1f53717d71d",
+  "movie": "dcdd0fad-a94c-4810-8acc-5f108d3b18c3",
+  "functionId": "67e9cc524532c1dbefc20c08",
+  "seats": ["A8", "F24" ]
+}
 
 ### Delete a reservation.
-DELETE http://localhost:1234/reservations/:id
+DELETE http://localhost:1234/reservations/94564c06-1051-4dd1-96a8-d4032c867c35/67e9cc524532c1dbefc20c08

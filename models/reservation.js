@@ -1,6 +1,4 @@
-import { Reservation } from '../models/mongodb/DBBroker.js';
-import { Movie } from '../models/mongodb/DBBroker.js';
-import { MovieModel } from './movie.js';
+import { Reservation, Movie } from '../models/mongodb/DBBroker.js';
 import { randomUUID } from 'crypto';
 
 export class ReservationModel {
@@ -26,18 +24,9 @@ export class ReservationModel {
    * @returns The new Reservation after its stored on the database.
    */
   static async create({ input }) {
-    const { movie, functionId, seats } = input;
-    const reservedSeats = await new MovieModel.reserveSeat({
-      movieId: movie,
-      functionId: functionId,
-      seats: seats,
-    });
-    if (reservedSeats) return null;
-
     const newReservation = new Reservation({
       _id: randomUUID(),
       ...input,
-      seats: [reservedSeats.forEach((seat) => seat.seatNumber)],
     });
 
     await newReservation.save().catch((err) => console.log(err));
@@ -60,31 +49,41 @@ export class ReservationModel {
    * @param {*} param0 Object containing the id.
    * @returns The reservation if it existed, otherwise null.
    */
-  static async cancelReservation({ reservationId, userId }) {
-    const reservation = await Reservation.findOne({
-      _id: reservationId,
-      user: userId,
-    });
-    if (!reservation) return null;
+  static async cancelReservation({ reservationId, functionId }) {
+    const deletedReservations =
+      await Reservation.findByIdAndDelete(reservationId);
+    if (!deletedReservations) return null;
 
-    const { movie, functionId, seats } = reservation;
-
-    const movieUpdate = await Movie.findOneAndUpdate(
+    const { movie, seats } = deletedReservations;
+    return await Movie.findOneAndUpdate(
       {
         _id: movie,
-        'functions._id': functionId,
+        functions: {
+          $elemMatch: {
+            _id: functionId,
+            seats: {
+              $all: seats.map((seatNumber) => ({
+                $elemMatch: {
+                  seatNumber,
+                  isAvailable: false,
+                },
+              })),
+            },
+          },
+        },
       },
       {
-        $set: { 'functions.$[].seats.$[seat].isAvailable': true },
+        $set: {
+          'functions.$[func].seats.$[seat].isAvailable': true,
+        },
       },
       {
-        arrayFilters: [{ 'seat.seatNumber': { $in: seats } }],
+        arrayFilters: [
+          { 'func._id': functionId },
+          { 'seat.seatNumber': { $in: seats } },
+        ],
         new: true,
       },
     );
-
-    if (!movieUpdate) return null;
-
-    return await Reservation.findByIdAndDelete(reservationId);
   }
 }

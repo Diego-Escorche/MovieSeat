@@ -56,10 +56,18 @@ export class ReservationController {
         .status(400)
         .json({ message: JSON.parse(validation.error.message) });
 
+    const reservedSeats = await MovieModel.reserveSeat({
+      movieId: validation.data.movie,
+      functionId: validation.data.functionId,
+      seats: validation.data.seats,
+    });
+    if (!reservedSeats) {
+      return res.status(400).json({ message: 'Seats could not be reserved' });
+    }
+
     const newReservation = await this.reservationModel.create({
       input: validation.data,
     });
-
     if (!newReservation) {
       return res
         .status(400)
@@ -69,34 +77,35 @@ export class ReservationController {
     return res.json(newReservation);
   });
 
-  update = asyncHandler(async (req, res) => {
-    const validation = validatePartialReservation(req.body);
-    if (!validation.success) return res.status(400).json(validation.error);
+  // update = asyncHandler(async (req, res) => {
+  //   const validation = validatePartialReservation(req.body);
+  //   if (!validation.success) return res.status(400).json(validation.error);
 
-    const { id } = req.params;
+  //   const { id } = req.params;
 
-    const updatedReservation = await this.reservationModel.update({
-      id: id,
-      input: validation.data,
-    });
+  //   const updatedReservation = await this.reservationModel.update({
+  //     id: id,
+  //     input: validation.data,
+  //   });
 
-    if (!updatedReservation) {
-      return res.status(404).json({ message: 'Reservation not found' });
-    }
+  //   if (!updatedReservation) {
+  //     return res.status(404).json({ message: 'Reservation not found' });
+  //   }
 
-    return res.json(updatedReservation);
-  });
+  //   return res.json(updatedReservation);
+  // });
 
   delete = asyncHandler(async (req, res) => {
-    const { id, userId } = req.params;
-    if (!id) return res.status(400).json({ message: 'Invalid ID format' });
+    const { id, functionId } = req.params;
+    if (!id || !functionId)
+      return res.status(400).json({ message: 'Invalid ID format' });
 
-    const check = await this.reservationModel.cancelReservation({
-      id: id,
-      userId: userId,
+    const deletedReservation = await this.reservationModel.cancelReservation({
+      reservationId: id,
+      functionId: functionId,
     });
 
-    if (!check) {
+    if (!deletedReservation) {
       return res.status(404).json({ message: 'Reservation not found' });
     }
 
