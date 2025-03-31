@@ -21,32 +21,11 @@ export const createMovieRouter = ({ movieModel, userModel }) => {
     authenticate({ userModel }),
     movieController.getById,
   );
-  moviesRouter.get(
-    '/:id/functions/:functionId/seats',
-    authenticate({ userModel }),
-    movieController.listAvailableSeats,
-  );
-  moviesRouter.get(
-    '/:id/functions',
-    authenticate({ userModel }),
-    movieController.getAllFunctions,
-  );
   moviesRouter.post(
     '/',
     authenticate({ userModel }),
     authorize('admin'),
     movieController.create,
-  );
-  moviesRouter.post(
-    '/:id/reserve',
-    authenticate({ userModel }),
-    movieController.reserveSeats,
-  );
-  moviesRouter.post(
-    '/:id/functions',
-    authenticate({ userModel }),
-    authorize('admin'),
-    movieController.addFunction,
   );
   moviesRouter.patch(
     '/:id',
@@ -59,6 +38,25 @@ export const createMovieRouter = ({ movieModel, userModel }) => {
     authenticate({ userModel }),
     authorize('admin'),
     movieController.delete,
+  );
+
+  // ------------------- FUNCTIONS -------------------------
+  moviesRouter.get(
+    '/:id/functions/:functionId/seats',
+    authenticate({ userModel }),
+    movieController.listAvailableSeats,
+  );
+  moviesRouter.get(
+    '/:id/functions',
+    authenticate({ userModel }),
+    movieController.getAllFunctions,
+  );
+  moviesRouter.post('/:id/reserve', movieController.reserveSeats);
+  moviesRouter.post(
+    '/:id/functions',
+    authenticate({ userModel }),
+    authorize('admin'),
+    movieController.addFunction,
   );
   moviesRouter.delete(
     '/:id/functions/:functionId',
