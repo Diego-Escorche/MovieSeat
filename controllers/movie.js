@@ -24,7 +24,7 @@ export class MovieController {
   getAll = asyncHandler(async (req, res) => {
     const { genre } = req.query;
     const movies = await this.movieModel.getAll({
-      ...(genre && { genre }),
+      ...(genre && { genre: genre }),
     });
 
     return res.json(movies);
