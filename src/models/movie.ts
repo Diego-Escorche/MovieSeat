@@ -1,7 +1,8 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Types } from 'mongoose';
 import { MovieFunction, Seat } from '../interfaces/movie.js';
 
 export interface Movie extends Document {
+  _id: string;
   title: string;
   year: number;
   director: string;
@@ -9,21 +10,21 @@ export interface Movie extends Document {
   poster: string;
   genre: string[];
   rate: number;
-  functions: MovieFunction[];
+  functions: Types.DocumentArray<MovieFunction>; // Typed as Mongoose subdocs
 }
 
 const seatSchema = new Schema<Seat>(
   {
-    seatNumber: String,
-    isAvailable: Boolean,
+    seatNumber: { type: String, required: true },
+    isAvailable: { type: Boolean, required: true },
   },
   { _id: false },
 );
 
 const functionSchema = new Schema<MovieFunction>(
   {
-    datetime: Date,
-    seats: [seatSchema],
+    datetime: { type: Date, required: true },
+    seats: { type: [seatSchema], default: [] },
   },
   { _id: true },
 );
@@ -38,7 +39,7 @@ const movieSchema = new Schema<Movie>(
     poster: String,
     genre: [String],
     rate: Number,
-    functions: [functionSchema],
+    functions: { type: [functionSchema], default: [] },
   },
   {
     timestamps: true,

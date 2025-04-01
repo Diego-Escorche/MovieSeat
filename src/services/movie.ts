@@ -4,7 +4,7 @@
  * nested movie functions (showtimes), seat availability, and reservation logic.
  */
 
-import { Movie } from '../models/mongodb/DBBroker.js';
+import { Movie } from '../models/movie.js';
 import { randomUUID } from 'crypto';
 import { generateSeats } from '../utils.js';
 import {
@@ -12,6 +12,7 @@ import {
   FunctionInput,
   MovieFunctionUpdate,
   MovieFunction,
+  Seat,
 } from '../interfaces/movie.js';
 
 export class MovieModel {
@@ -148,10 +149,12 @@ export class MovieModel {
     const movie = await Movie.findById(movieId);
     if (!movie) return null;
 
-    const func = movie.functions.id(functionId);
+    const func = movie.functions.find(
+      (f: MovieFunction) => f._id.toString() === functionId,
+    );
     if (!func) return null;
 
-    const availableSeats = func.seats.filter((seat) => seat.isAvailable);
+    const availableSeats = func.seats.filter((seat: Seat) => seat.isAvailable);
     return availableSeats;
   }
 

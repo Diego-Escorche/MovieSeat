@@ -5,8 +5,8 @@ export interface Seat {
   isAvailable: boolean;
 }
 
-export interface MovieFunction {
-  _id?: Types.ObjectId;
+export interface MovieFunction extends Types.Subdocument {
+  _id: Types.ObjectId;
   datetime: Date;
   seats: Seat[];
 }
