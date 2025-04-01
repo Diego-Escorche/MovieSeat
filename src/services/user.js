@@ -6,7 +6,7 @@
  */
 
 import { randomUUID } from 'crypto';
-import { User } from './mongodb/DBBroker.js';
+import { User } from '../models/mongodb/DBBroker.js';
 
 export class UserModel {
   /**
