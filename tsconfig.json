@@ -1,1 +1,17 @@
-{}
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "node16", // Use Node ESM
+    "moduleResolution": "node16", // Must match with 'module'
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "allowJs": true // In case you want to migrate gradually
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

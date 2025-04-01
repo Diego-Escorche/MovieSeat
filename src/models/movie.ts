@@ -39,7 +39,7 @@ export interface MovieDocument {
   poster: string;
   genre: string[];
   rate: number;
-  functions: MovieFunction[] | any[];
+  functions: MovieFunction[];
 }
 
 export class MovieModel {
@@ -179,7 +179,7 @@ export class MovieModel {
     const func = movie.functions.id(functionId);
     if (!func) return null;
 
-    const availableSeats = func.seats.filter((seat: Seat) => seat.isAvailable);
+    const availableSeats = func.seats.filter((seat) => seat.isAvailable);
     return availableSeats;
   }
 

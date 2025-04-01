@@ -1,10 +1,10 @@
 import express, { json } from 'express';
-import { createMovieRouter } from './routes/movies.js';
-import { createUserRouter } from './routes/user.js';
-import { createReservationRouter } from './routes/reservation.js';
-import { corsMiddleware } from './middlewares/cors.js';
+import { createMovieRouter } from './src/routes/movies.js';
+import { createUserRouter } from './src/routes/user.js';
+import { createReservationRouter } from './src/routes/reservation.js';
+import { corsMiddleware } from './src/middlewares/cors.js';
 import bcrypt from 'bcrypt';
-import { connectDB, disconnectDB } from './models/mongodb/DBBroker.js';
+import { connectDB, disconnectDB } from './src/models/mongodb/DBBroker.js';
 import cookieParser from 'cookie-parser';
 import fs from 'fs';
 import dotenv from 'dotenv';

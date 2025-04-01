@@ -1,4 +1,4 @@
-import { Reservation, Movie } from '../models/mongodb/DBBroker.js';
+import { Reservation, Movie } from './mongodb/DBBroker.js';
 import { randomUUID } from 'crypto';
 
 export class ReservationModel {
