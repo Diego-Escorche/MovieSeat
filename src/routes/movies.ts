@@ -7,13 +7,12 @@
 import { Router } from 'express';
 import { MovieController } from '../controllers/movie.js';
 import { authenticate, authorize } from '../middlewares/auth/auth.js';
-import { Model } from 'mongoose';
-import { IMovie } from '../interfaces/movie.js';
-import { IUser } from '../interfaces/user.js';
+import { MovieModel } from '../services/movie.js';
+import { UserModel } from '../services/user.js';
 
 interface CreateMovieRouterProps {
-  movieModel: Model<IMovie>;
-  userModel: Model<IUser>;
+  movieModel: MovieModel;
+  userModel: UserModel;
 }
 
 export const createMovieRouter = ({
