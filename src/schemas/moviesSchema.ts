@@ -1,7 +1,10 @@
-import { z } from 'zod'; // To validate the JSON data
+import { z } from 'zod';
 
-// Validate the data with a schema.
-const movieSchema = z.object({
+// ------------------------
+// 🎬 Movie Schema (Zod)
+// ------------------------
+
+export const movieSchema = z.object({
   title: z.string({
     invalid_type_error: 'Movie title must be a string.',
     required_error: 'Movie title is required.',
@@ -36,19 +39,28 @@ const movieSchema = z.object({
       z.object({
         datetime: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, {
           message: 'Datetime must be in ISO 8601 format',
-          required_error: 'Datetime is required',
         }),
       }),
     )
     .optional(),
 });
 
-export function validateMovie(object) {
-  const { _id, ...data } = object;
+// ------------------------
+// 🔍 Types
+// ------------------------
+
+export type MovieInput = z.infer<typeof movieSchema>;
+
+// ------------------------
+// ✅ Validators
+// ------------------------
+
+export function validateMovie(object: unknown) {
+  const { _id, ...data } = object as Record<string, unknown>;
   return movieSchema.safeParse(data);
 }
 
-export function validatePartialMovie(object) {
-  const { _id, ...data } = object;
+export function validatePartialMovie(object: unknown) {
+  const { _id, ...data } = object as Record<string, unknown>;
   return movieSchema.partial().safeParse(data);
 }
