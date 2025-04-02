@@ -1,6 +1,6 @@
 import { Movie } from '../models/movie.js';
-import { randomUUID } from 'crypto';
 import { Reservation } from '../models/reservation.js';
+import { randomUUID } from 'crypto';
 import { IReservation } from '../interfaces/reservation.js';
 import { Document } from 'mongoose';
 
@@ -73,7 +73,7 @@ export class ReservationModel {
   }: {
     reservationId: string;
     functionId: string;
-  }): Promise<any> {
+  }) {
     const deletedReservation =
       await Reservation.findByIdAndDelete(reservationId);
     if (!deletedReservation) return null;

@@ -4,7 +4,7 @@ import { createUserRouter } from './routes/user.js';
 import { createReservationRouter } from './routes/reservation.js';
 import { corsMiddleware } from './middlewares/cors.js';
 import bcrypt from 'bcrypt';
-import { connectDB, disconnectDB } from './models/mongodb/DBBroker.js';
+import { connectDB, disconnectDB } from './config/db.js';
 import cookieParser from 'cookie-parser';
 import fs from 'fs';
 import dotenv from 'dotenv';
