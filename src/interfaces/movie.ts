@@ -20,7 +20,7 @@ export interface FunctionInput {
   datetime: string;
 }
 
-export interface MovieDocument {
+export interface IMovie {
   _id: string;
   title: string;
   year: number;

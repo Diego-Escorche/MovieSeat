@@ -8,7 +8,7 @@ import { Movie } from '../models/movie.js';
 import { randomUUID } from 'crypto';
 import { generateSeats } from '../utils.js';
 import {
-  MovieDocument,
+  IMovie,
   FunctionInput,
   MovieFunctionUpdate,
   MovieFunction,
@@ -30,11 +30,7 @@ export class MovieModel {
     return await Movie.findById(id).catch((err) => console.log(err));
   }
 
-  static async create({
-    input,
-  }: {
-    input: Omit<MovieDocument, '_id' | 'functions'>;
-  }) {
+  static async create({ input }: { input: Omit<IMovie, '_id' | 'functions'> }) {
     const newMovie = new Movie({
       _id: randomUUID(),
       ...input,
@@ -53,7 +49,7 @@ export class MovieModel {
     input,
   }: {
     id: string;
-    input: Partial<MovieDocument> & { updates?: MovieFunctionUpdate[] };
+    input: Partial<IMovie> & { updates?: MovieFunctionUpdate[] };
   }) {
     const { updates, ...movieFields } = input;
 

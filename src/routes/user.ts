@@ -8,8 +8,16 @@
 import { Router } from 'express';
 import { UserController } from '../controllers/user.js';
 import { authenticate, authorize } from '../middlewares/auth/auth.js';
+import { Model } from 'mongoose';
+import { IUser } from '../interfaces/user.js';
 
-export const createUserRouter = ({ userModel }) => {
+interface CreateUserRouterProps {
+  userModel: Model<IUser>;
+}
+
+export const createUserRouter = ({
+  userModel,
+}: CreateUserRouterProps): Router => {
   const userRouter = Router();
   const userController = new UserController({ userModel });
 
@@ -30,7 +38,7 @@ export const createUserRouter = ({ userModel }) => {
    */
   userRouter.delete(
     '/delete/:id',
-    authenticate({ userModel: userModel }),
+    authenticate({ userModel }),
     userController.delete,
   );
 
@@ -39,7 +47,7 @@ export const createUserRouter = ({ userModel }) => {
    */
   userRouter.patch(
     '/update/:userId',
-    authenticate({ userModel: userModel }),
+    authenticate({ userModel }),
     userController.update,
   );
 
@@ -48,7 +56,7 @@ export const createUserRouter = ({ userModel }) => {
    */
   userRouter.patch(
     '/promote/:userId',
-    authenticate({ userModel: userModel }),
+    authenticate({ userModel }),
     authorize('admin'),
     userController.promoteToAdmin,
   );
@@ -58,7 +66,7 @@ export const createUserRouter = ({ userModel }) => {
    */
   userRouter.post(
     '/logout',
-    authenticate({ userModel: userModel }),
+    authenticate({ userModel }),
     userController.logout,
   );
 
