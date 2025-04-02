@@ -10,7 +10,7 @@ export interface Movie extends Document {
   poster: string;
   genre: string[];
   rate: number;
-  functions: Types.DocumentArray<MovieFunction>; // Typed as Mongoose subdocs
+  functions: Types.DocumentArray<MovieFunction>;
 }
 
 const seatSchema = new Schema<Seat>(
