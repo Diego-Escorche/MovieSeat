@@ -8,13 +8,21 @@ import { ReservationModel } from '../services/reservation.js';
 import { MovieModel } from '../services/movie.js';
 
 export class ReservationController {
+  private reservationModel: ReservationModel;
+  private movieModel: MovieModel;
+
+  constructor(reservationModel: ReservationModel, movieModel: MovieModel) {
+    this.reservationModel = reservationModel;
+    this.movieModel = movieModel;
+  }
+
   getAll = asyncHandler(async (req: Request, res: Response) => {
     const { date } = req.query;
     const query: any = { multiple: true };
 
     if (date) query.createdAt = date;
 
-    const reservations = await ReservationModel.getReservations(query);
+    const reservations = await this.reservationModel.getReservations(query);
     return res.json(reservations);
   });
 
@@ -32,7 +40,7 @@ export class ReservationController {
       multiple: true,
     };
 
-    const reservations = await ReservationModel.getReservations(query);
+    const reservations = await this.reservationModel.getReservations(query);
     return res.json(reservations);
   });
 
@@ -46,7 +54,7 @@ export class ReservationController {
 
     const { movie, functionId, seats } = validation.data;
 
-    const reservedSeats = await MovieModel.reserveSeat({
+    const reservedSeats = await this.movieModel.reserveSeat({
       movieId: movie,
       functionId,
       seats,
@@ -56,7 +64,7 @@ export class ReservationController {
       return res.status(400).json({ message: 'Seats could not be reserved' });
     }
 
-    const newReservation = await ReservationModel.create({
+    const newReservation = await this.reservationModel.create({
       input: validation.data,
     });
 
@@ -75,7 +83,7 @@ export class ReservationController {
   //   if (!validation.success) return res.status(400).json(validation.error);
   //
   //   const { id } = req.params;
-  //   const updatedReservation = await ReservationModel.update({
+  //   const updatedReservation = await this.reservationModel.update({
   //     id,
   //     input: validation.data,
   //   });
@@ -93,7 +101,7 @@ export class ReservationController {
       return res.status(400).json({ message: 'Invalid ID format' });
     }
 
-    const deletedReservation = await ReservationModel.cancelReservation({
+    const deletedReservation = await this.reservationModel.cancelReservation({
       reservationId: id,
       functionId,
     });

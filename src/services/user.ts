@@ -12,7 +12,7 @@ export class UserModel {
    * Finds a user by email or username.
    * @returns The found user document or null.
    */
-  static async login({
+  async login({
     email,
     username,
   }: {
@@ -29,7 +29,7 @@ export class UserModel {
   /**
    * Registers a new user with a UUID as their _id.
    */
-  static async register({
+  async register({
     input,
   }: {
     input: Omit<IUser, '_id'>;
@@ -45,7 +45,7 @@ export class UserModel {
   /**
    * Updates a user by their ID.
    */
-  static async update({
+  async update({
     id,
     input,
   }: {
@@ -63,7 +63,7 @@ export class UserModel {
   /**
    * Deletes a user by their ID.
    */
-  static async delete({ id }: { id: string }): Promise<UserDocument | null> {
+  async delete({ id }: { id: string }): Promise<UserDocument | null> {
     return await User.findByIdAndDelete(id).catch((err) => {
       console.log(err);
       return null;
@@ -73,7 +73,7 @@ export class UserModel {
   /**
    * Finds a user by ID and returns a safe version without the password.
    */
-  static async findById(id: string): Promise<SafeUser | null> {
+  async findById(id: string): Promise<SafeUser | null> {
     const user = await User.findById(id).lean();
     if (!user) return null;
 

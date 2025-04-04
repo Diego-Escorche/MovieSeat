@@ -10,7 +10,7 @@ export class ReservationModel {
   /**
    * Gets reservations based on optional date/user filters.
    */
-  static async getReservations({
+  async getReservations({
     createdAt,
     user,
     multiple = false,
@@ -32,7 +32,7 @@ export class ReservationModel {
   /**
    * Stores a reservation in the database.
    */
-  static async create({
+  async create({
     input,
   }: {
     input: Omit<IReservation, '_id' | 'createdAt'>;
@@ -49,7 +49,7 @@ export class ReservationModel {
   /**
    * Updates a reservation by its ID.
    */
-  static async update({
+  async update({
     id,
     input,
   }: {
@@ -67,7 +67,7 @@ export class ReservationModel {
   /**
    * Cancels a reservation and updates seat availability.
    */
-  static async cancelReservation({
+  async cancelReservation({
     reservationId,
     functionId,
   }: {

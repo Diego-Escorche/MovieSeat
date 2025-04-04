@@ -16,7 +16,7 @@ import {
 } from '../interfaces/movie.js';
 
 export class MovieModel {
-  static async getAll({ genre }: { genre?: string }) {
+  async getAll({ genre }: { genre?: string }) {
     const query = genre
       ? {
           genre: { $elemMatch: { $regex: new RegExp(genre, 'i') } },
@@ -26,11 +26,11 @@ export class MovieModel {
     return await Movie.find(query).catch((err) => console.log(err));
   }
 
-  static async getById({ id }: { id: string }) {
+  async getById({ id }: { id: string }) {
     return await Movie.findById(id).catch((err) => console.log(err));
   }
 
-  static async create({ input }: { input: Omit<IMovie, '_id' | 'functions'> }) {
+  async create({ input }: { input: Omit<IMovie, '_id' | 'functions'> }) {
     const newMovie = new Movie({
       _id: randomUUID(),
       ...input,
@@ -40,11 +40,11 @@ export class MovieModel {
     return newMovie;
   }
 
-  static async delete({ id }: { id: string }) {
+  async delete({ id }: { id: string }) {
     return await Movie.findByIdAndDelete(id).catch((err) => console.log(err));
   }
 
-  static async update({
+  async update({
     id,
     input,
   }: {
@@ -68,13 +68,13 @@ export class MovieModel {
     return updatedMovie;
   }
 
-  static async getFunctions({ movieId }: { movieId: string }) {
+  async getFunctions({ movieId }: { movieId: string }) {
     const movie = await Movie.findById(movieId);
     if (!movie) return null;
     return movie.functions;
   }
 
-  static async addFunction({
+  async addFunction({
     movieId,
     input,
   }: {
@@ -95,7 +95,7 @@ export class MovieModel {
     return movie;
   }
 
-  static async updateFunction({
+  async updateFunction({
     movie,
     updates,
   }: {
@@ -119,7 +119,7 @@ export class MovieModel {
     return movie;
   }
 
-  static async deleteFunction({
+  async deleteFunction({
     movieId,
     functionId,
   }: {
@@ -135,7 +135,7 @@ export class MovieModel {
     return movie;
   }
 
-  static async getAvailableSeats({
+  async getAvailableSeats({
     movieId,
     functionId,
   }: {
@@ -154,7 +154,7 @@ export class MovieModel {
     return availableSeats;
   }
 
-  static async reserveSeat({
+  async reserveSeat({
     movieId,
     functionId,
     seats,

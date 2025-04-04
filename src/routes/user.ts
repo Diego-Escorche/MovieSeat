@@ -9,10 +9,15 @@ import { Router } from 'express';
 import { UserController } from '../controllers/user.js';
 import { authenticate, authorize } from '../middlewares/auth/auth.js';
 import { UserModel } from '../services/user.js';
+interface CreateUserRouterProps {
+  userModel: UserModel;
+}
 
-export const createUserRouter = (): Router => {
+export const createUserRouter = ({
+  userModel,
+}: CreateUserRouterProps): Router => {
   const userRouter = Router();
-  const userController = new UserController();
+  const userController = new UserController(userModel);
 
   // ------------------- ROUTES -------------------------
 
@@ -31,7 +36,7 @@ export const createUserRouter = (): Router => {
    */
   userRouter.delete(
     '/delete/:id',
-    authenticate({ UserModel }),
+    authenticate({ userModel }),
     userController.delete,
   );
 
@@ -40,7 +45,7 @@ export const createUserRouter = (): Router => {
    */
   userRouter.patch(
     '/update/:userId',
-    authenticate({ UserModel }),
+    authenticate({ userModel }),
     userController.update,
   );
 
@@ -49,7 +54,7 @@ export const createUserRouter = (): Router => {
    */
   userRouter.patch(
     '/promote/:userId',
-    authenticate({ UserModel }),
+    authenticate({ userModel }),
     authorize('admin'),
     userController.promoteToAdmin,
   );
@@ -59,7 +64,7 @@ export const createUserRouter = (): Router => {
    */
   userRouter.post(
     '/logout',
-    authenticate({ UserModel }),
+    authenticate({ userModel }),
     userController.logout,
   );
 
