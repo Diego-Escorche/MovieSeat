@@ -1,73 +1,65 @@
+import { Request, Response } from 'express';
 import {
   validateReservation,
   validatePartialReservation,
 } from '../schemas/reservationSchema.js';
 import { asyncHandler } from '../utils.js';
+import { ReservationModel } from '../services/reservation.js';
+import { MovieModel } from '../services/movie.js';
 
 export class ReservationController {
-  constructor({ reservationModel, userModel, movieModel }) {
-    this.reservationModel = reservationModel;
-    this.userModel = userModel;
-    this.movieModel = movieModel;
-  }
-
-  getAll = asyncHandler(async (req, res) => {
+  getAll = asyncHandler(async (req: Request, res: Response) => {
     const { date } = req.query;
-    const query = { multiple: true };
+    const query: any = { multiple: true };
+
     if (date) query.createdAt = date;
 
-    const reservations = await this.reservationModel.getReservations(query);
-
+    const reservations = await ReservationModel.getReservations(query);
     return res.json(reservations);
   });
 
-  getByUserId = asyncHandler(async (req, res) => {
+  getByUserId = asyncHandler(async (req: Request, res: Response) => {
     const { userId } = req.params;
-
     if (!userId) {
       return res.status(400).json({ message: 'Invalid request syntax' });
     }
 
     const { date } = req.query;
 
-    const query = {
+    const query: any = {
       user: userId,
       ...(date && { createdAt: date }),
       multiple: true,
     };
 
-    const reservations = await this.reservationModel.getReservations(query);
-
+    const reservations = await ReservationModel.getReservations(query);
     return res.json(reservations);
   });
 
-  /**
-   * Function that will create a reservation after validating the data stored
-   * in the body of the request.
-   * @param {*} req
-   * @param {*} res
-   * @returns The validation in a json if it created it. If an error ocurred it will send
-   * a json with a message.
-   */
-  create = asyncHandler(async (req, res) => {
+  create = asyncHandler(async (req: Request, res: Response) => {
     const validation = validateReservation(req.body);
-    if (!validation.success)
+    if (!validation.success) {
       return res
         .status(400)
         .json({ message: JSON.parse(validation.error.message) });
+    }
+
+    const { movie, functionId, seats } = validation.data;
 
     const reservedSeats = await MovieModel.reserveSeat({
-      movieId: validation.data.movie,
-      functionId: validation.data.functionId,
-      seats: validation.data.seats,
+      movieId: movie,
+      functionId,
+      seats,
     });
+
     if (!reservedSeats) {
       return res.status(400).json({ message: 'Seats could not be reserved' });
     }
 
-    const newReservation = await this.reservationModel.create({
+    const newReservation = await ReservationModel.create({
       input: validation.data,
     });
+
     if (!newReservation) {
       return res
         .status(400)
@@ -77,32 +69,33 @@ export class ReservationController {
     return res.json(newReservation);
   });
 
-  // update = asyncHandler(async (req, res) => {
+  // Uncomment this block and type it properly once update is needed
+  // update = asyncHandler(async (req: Request, res: Response) => {
   //   const validation = validatePartialReservation(req.body);
   //   if (!validation.success) return res.status(400).json(validation.error);
-
+  //
   //   const { id } = req.params;
-
-  //   const updatedReservation = await this.reservationModel.update({
-  //     id: id,
+  //   const updatedReservation = await ReservationModel.update({
+  //     id,
   //     input: validation.data,
   //   });
-
+  //
   //   if (!updatedReservation) {
   //     return res.status(404).json({ message: 'Reservation not found' });
   //   }
-
+  //
   //   return res.json(updatedReservation);
   // });
 
-  delete = asyncHandler(async (req, res) => {
+  delete = asyncHandler(async (req: Request, res: Response) => {
     const { id, functionId } = req.params;
-    if (!id || !functionId)
+    if (!id || !functionId) {
       return res.status(400).json({ message: 'Invalid ID format' });
+    }
 
-    const deletedReservation = await this.reservationModel.cancelReservation({
+    const deletedReservation = await ReservationModel.cancelReservation({
       reservationId: id,
-      functionId: functionId,
+      functionId,
     });
 
     if (!deletedReservation) {

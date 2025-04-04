@@ -1,60 +1,43 @@
 import { Router } from 'express';
 import { ReservationController } from '../controllers/reservation.js';
 import { authenticate, authorize } from '../middlewares/auth/auth.js';
-import { Model } from 'mongoose';
-import { IUser } from '../interfaces/user.js';
-import { IMovie } from '../interfaces/movie.js';
-import { IReservation } from '../interfaces/reservation.js';
+import { UserModel } from '../services/user.js';
 
-interface CreateReservationRouterProps {
-  reservationModel: Model<IReservation>;
-  userModel: Model<IUser>;
-  movieModel: Model<IMovie>;
-}
-
-export const createReservationRouter = ({
-  reservationModel,
-  userModel,
-  movieModel,
-}: CreateReservationRouterProps): Router => {
+export const createReservationRouter = (): Router => {
   const reservationRouter = Router();
 
-  const reservationController = new ReservationController({
-    reservationModel,
-    userModel,
-    movieModel,
-  });
+  const reservationController = new ReservationController();
 
   // ------------------- ROUTES -------------------------
 
   reservationRouter.get(
     '/',
-    authenticate({ userModel }),
+    authenticate({ UserModel }),
     authorize('admin'),
     reservationController.getAll,
   );
 
   reservationRouter.get(
     '/:userId',
-    authenticate({ userModel }),
+    authenticate({ UserModel }),
     reservationController.getByUserId,
   );
 
   reservationRouter.post(
     '/',
-    authenticate({ userModel }),
+    authenticate({ UserModel }),
     reservationController.create,
   );
 
   // reservationRouter.patch(
   //   '/:id',
-  //   authenticate({ userModel }), ← Uncomment if needed
+  //   authenticate({ UserModel }), ← Uncomment if needed
   //   reservationController.update
   // );
 
   reservationRouter.delete(
     '/:id/:functionId',
-    authenticate({ userModel }),
+    authenticate({ UserModel }),
     reservationController.delete,
   );
 

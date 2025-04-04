@@ -13,20 +13,10 @@ import { asyncHandler } from '../utils.js';
 import { MovieModel } from '../services/movie.js';
 import { IMovie } from '../interfaces/movie.js';
 
-interface MovieControllerDeps {
-  movieModel: MovieModel;
-}
-
 export class MovieController {
-  private movieModel: MovieControllerDeps['movieModel'];
-
-  constructor({ movieModel }: MovieControllerDeps) {
-    this.movieModel = movieModel;
-  }
-
   getAll = asyncHandler(async (req: Request, res: Response) => {
     const { genre } = req.query;
-    const movies = await this.movieModel.getAll({
+    const movies = await MovieModel.getAll({
       ...(genre && { genre: genre as string }),
     });
     return res.json(movies);
@@ -36,7 +26,7 @@ export class MovieController {
     const { id } = req.params;
     if (!id) return res.status(400).json({ message: 'Invalid Syntax' });
 
-    const movie = await this.movieModel.getById({ id });
+    const movie = await MovieModel.getById({ id });
     if (!movie) return res.status(404).json({ message: 'Movie not found' });
 
     return res.json(movie);
@@ -52,19 +42,18 @@ export class MovieController {
 
     const { functions, ...movieData } = result.data;
 
-    const newMovie = await this.movieModel.create({ input: movieData });
+    const newMovie = await MovieModel.create({ input: movieData });
     if (!newMovie) {
       return res.status(500).json({ message: 'Movie could not be created' });
     }
 
-    let functionUpdate = null;
     if (functions?.length) {
-      functionUpdate = await this.movieModel.addFunction({
+      const functionUpdate = await MovieModel.addFunction({
         movieId: newMovie._id,
         input: functions,
       });
 
-      if (!newMovie) {
+      if (!functionUpdate) {
         return res
           .status(500)
           .json({ message: 'Function could not be created' });
@@ -78,7 +67,7 @@ export class MovieController {
     const { id } = req.params;
     if (!id) return res.status(400).json({ message: 'Invalid Syntax' });
 
-    const deleted = await this.movieModel.delete({ id });
+    const deleted = await MovieModel.delete({ id });
     if (!deleted) {
       return res.status(404).json({ message: 'Movie not found' });
     }
@@ -97,7 +86,7 @@ export class MovieController {
     const { id } = req.params;
     if (!id) return res.status(400).json({ message: 'Invalid Syntax' });
 
-    const updatedMovie = await this.movieModel.update({
+    const updatedMovie = await MovieModel.update({
       id,
       input: result.data as Partial<IMovie>,
     });
@@ -113,7 +102,7 @@ export class MovieController {
     const { id } = req.params;
     if (!id) return res.status(400).json({ message: 'Invalid Syntax' });
 
-    const functions = await this.movieModel.getFunctions({ movieId: id });
+    const functions = await MovieModel.getFunctions({ movieId: id });
     if (!functions) {
       return res.status(404).json({ message: 'Movie not found' });
     }
@@ -137,7 +126,7 @@ export class MovieController {
       return res.status(400).json({ message: 'Function is required' });
     }
 
-    const updatedMovie = await this.movieModel.addFunction({
+    const updatedMovie = await MovieModel.addFunction({
       movieId: id,
       input: functions,
     });
@@ -156,7 +145,7 @@ export class MovieController {
     if (!id || !functionId)
       return res.status(400).json({ message: 'Invalid Syntax' });
 
-    const updatedMovie = await this.movieModel.deleteFunction({
+    const updatedMovie = await MovieModel.deleteFunction({
       movieId: id,
       functionId,
     });
@@ -175,7 +164,7 @@ export class MovieController {
     if (!id || !functionId)
       return res.status(400).json({ message: 'Invalid Syntax' });
 
-    const availableSeats = await this.movieModel.getAvailableSeats({
+    const availableSeats = await MovieModel.getAvailableSeats({
       movieId: id,
       functionId,
     });
@@ -199,7 +188,7 @@ export class MovieController {
         .json({ message: 'FunctionId and seats are required' });
     }
 
-    const updatedMovie = await this.movieModel.reserveSeat({
+    const updatedMovie = await MovieModel.reserveSeat({
       movieId: id,
       functionId,
       seats,

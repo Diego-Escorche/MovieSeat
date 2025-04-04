@@ -7,49 +7,40 @@
 import { Router } from 'express';
 import { MovieController } from '../controllers/movie.js';
 import { authenticate, authorize } from '../middlewares/auth/auth.js';
-import { MovieModel } from '../services/movie.js';
 import { UserModel } from '../services/user.js';
 
-interface CreateMovieRouterProps {
-  movieModel: MovieModel;
-  userModel: UserModel;
-}
-
-export const createMovieRouter = ({
-  movieModel,
-  userModel,
-}: CreateMovieRouterProps): Router => {
+export const createMovieRouter = (): Router => {
   const moviesRouter = Router();
 
-  const movieController = new MovieController({ movieModel });
+  const movieController = new MovieController();
 
   // ------------------- ROUTES -------------------------
 
-  moviesRouter.get('/', authenticate({ userModel }), movieController.getAll);
+  moviesRouter.get('/', authenticate({ UserModel }), movieController.getAll);
 
   moviesRouter.get(
     '/:id',
-    authenticate({ userModel }),
+    authenticate({ UserModel }),
     movieController.getById,
   );
 
   moviesRouter.post(
     '/',
-    authenticate({ userModel }),
+    authenticate({ UserModel }),
     authorize('admin'),
     movieController.create,
   );
 
   moviesRouter.patch(
     '/:id',
-    authenticate({ userModel }),
+    authenticate({ UserModel }),
     authorize('admin'),
     movieController.update,
   );
 
   moviesRouter.delete(
     '/:id',
-    authenticate({ userModel }),
+    authenticate({ UserModel }),
     authorize('admin'),
     movieController.delete,
   );
@@ -58,13 +49,13 @@ export const createMovieRouter = ({
 
   moviesRouter.get(
     '/:id/functions/:functionId/seats',
-    authenticate({ userModel }),
+    authenticate({ UserModel }),
     movieController.listAvailableSeats,
   );
 
   moviesRouter.get(
     '/:id/functions',
-    authenticate({ userModel }),
+    authenticate({ UserModel }),
     movieController.getAllFunctions,
   );
 
@@ -72,14 +63,14 @@ export const createMovieRouter = ({
 
   moviesRouter.post(
     '/:id/functions',
-    authenticate({ userModel }),
+    authenticate({ UserModel }),
     authorize('admin'),
     movieController.addFunction,
   );
 
   moviesRouter.delete(
     '/:id/functions/:functionId',
-    authenticate({ userModel }),
+    authenticate({ UserModel }),
     authorize('admin'),
     movieController.deleteFunction,
   );

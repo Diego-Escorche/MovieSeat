@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
 import { User } from '../models/user.js';
 import { IUser } from '../interfaces/user.js';
-import { Document, Types } from 'mongoose';
+import { Document } from 'mongoose';
 
 type UserDocument = Document<unknown, {}, IUser> & IUser;
 

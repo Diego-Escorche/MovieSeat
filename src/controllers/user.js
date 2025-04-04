@@ -22,10 +22,6 @@ dotenv.config();
 const secret = process.env.JWT_SECRET;
 
 export class UserController {
-  constructor({ userModel }) {
-    this.userModel = userModel;
-  }
-
   /**
    * Authenticates a user with email/username and password.
    * Issues a signed JWT token stored in an HTTP-only cookie.
