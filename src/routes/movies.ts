@@ -11,17 +11,17 @@ import { MovieService } from '../services/movie.js';
 import { UserService } from '../services/user.js';
 
 interface CreateMovieRouterProps {
-  movieModel: MovieService;
+  movieService: MovieService;
   userService: UserService;
 }
 
 export const createMovieRouter = ({
-  movieModel,
+  movieService,
   userService,
 }: CreateMovieRouterProps): Router => {
   const moviesRouter = Router();
 
-  const movieController = new MovieController(movieModel);
+  const movieController = new MovieController(movieService);
 
   // ------------------- ROUTES -------------------------
 

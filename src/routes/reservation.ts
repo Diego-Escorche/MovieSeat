@@ -5,53 +5,53 @@ import { ReservationService } from '../services/reservation.js';
 import { UserService } from '../services/user.js';
 import { MovieService } from '../services/movie.js';
 interface CreateReservationRouterProps {
-  reservationModel: ReservationService;
-  userModel: UserService;
-  movieModel: MovieService;
+  reservationService: ReservationService;
+  userService: UserService;
+  movieService: MovieService;
 }
 
 export const createReservationRouter = ({
-  reservationModel,
-  userModel,
-  movieModel,
+  reservationService,
+  userService,
+  movieService,
 }: CreateReservationRouterProps): Router => {
   const reservationRouter = Router();
 
   const reservationController = new ReservationController(
-    reservationModel,
-    movieModel,
+    reservationService,
+    movieService,
   );
 
   // ------------------- ROUTES -------------------------
 
   reservationRouter.get(
     '/',
-    authenticate({ userService: userModel }),
+    authenticate({ userService }),
     authorize('admin'),
     reservationController.getAll,
   );
 
   reservationRouter.get(
     '/:userId',
-    authenticate({ userService: userModel }),
+    authenticate({ userService }),
     reservationController.getByUserId,
   );
 
   reservationRouter.post(
     '/',
-    authenticate({ userService: userModel }),
+    authenticate({ userService }),
     reservationController.create,
   );
 
   // reservationRouter.patch(
   //   '/:id',
-  //   authenticate({ userModel }), ← Uncomment if needed
+  //   authenticate({ userService }), ← Uncomment if needed
   //   reservationController.update
   // );
 
   reservationRouter.delete(
     '/:id/:functionId',
-    authenticate({ userService: userModel }),
+    authenticate({ userService }),
     reservationController.delete,
   );
 
