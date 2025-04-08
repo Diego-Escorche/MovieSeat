@@ -5,9 +5,9 @@ import { Document } from 'mongoose';
 
 type UserDocument = Document<unknown, {}, IUser> & IUser;
 
-type SafeUser = Omit<IUser, 'password'>;
+// type SafeUser = Omit<IUser, 'password'>;
 
-export class UserModel {
+export class UserService {
   /**
    * Finds a user by email or username.
    * @returns The found user document or null.
@@ -73,11 +73,10 @@ export class UserModel {
   /**
    * Finds a user by ID and returns a safe version without the password.
    */
-  async findById(id: string): Promise<SafeUser | null> {
+  async findById(id: string): Promise<IUser | null> {
     const user = await User.findById(id).lean();
     if (!user) return null;
 
-    const { password, ...safeUser } = user as IUser;
-    return safeUser;
+    return user as IUser;
   }
 }

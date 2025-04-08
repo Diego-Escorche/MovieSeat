@@ -16,7 +16,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import { asyncHandler } from '../utils.js';
-import { UserModel } from '../services/user.js';
+import { UserService } from '../services/user.js';
 import { validateUser, validatePartialUser } from '../schemas/userSchema.js';
 
 dotenv.config();
@@ -24,15 +24,15 @@ dotenv.config();
 const secret = process.env.JWT_SECRET as string;
 
 export class UserController {
-  private userModel: UserModel;
+  private userService: UserService;
 
-  constructor(userModel: UserModel) {
-    this.userModel = userModel;
+  constructor(userService: UserService) {
+    this.userService = userService;
   }
 
   login = asyncHandler(async (req: Request, res: Response) => {
     const { email, username, password } = req.body;
-    const user = await this.userModel.login({ email, username });
+    const user = await this.userService.login({ email, username });
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -63,7 +63,7 @@ export class UserController {
 
     const hashedPassword = await bcrypt.hash(result.data.password, 10);
 
-    const newUser = await this.userModel.register({
+    const newUser = await this.userService.register({
       input: {
         ...result.data,
         password: hashedPassword,
@@ -98,7 +98,7 @@ export class UserController {
       password = await bcrypt.hash(check.data.password, 10);
     }
 
-    const updatedUser = await this.userModel.update({
+    const updatedUser = await this.userService.update({
       id: userId,
       input: {
         ...(check.data.email && { email: check.data.email }),
@@ -114,7 +114,7 @@ export class UserController {
   delete = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const deletedUser = await this.userModel.delete({ id });
+    const deletedUser = await this.userService.delete({ id });
 
     if (deletedUser) {
       return res.json({ message: 'User deleted successfully' });
@@ -126,7 +126,7 @@ export class UserController {
   promoteToAdmin = asyncHandler(async (req: Request, res: Response) => {
     const { userId } = req.params;
 
-    const updatedUser = await this.userModel.update({
+    const updatedUser = await this.userService.update({
       id: userId,
       input: { role: ['admin'] },
     });

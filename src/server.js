@@ -1,10 +1,10 @@
 import { createApp } from './app.js';
-import { MovieModel } from './services/movie.js';
-import { UserModel } from './services/user.js';
-import { ReservationModel } from './services/reservation.js';
+import { MovieService } from './services/movie.js';
+import { UserService } from './services/user.js';
+import { ReservationService } from './services/reservation.js';
 
 createApp({
-  movieModel: MovieModel,
-  userModel: UserModel,
-  reservationModel: ReservationModel,
+  movieModel: MovieService,
+  userModel: UserService,
+  reservationModel: ReservationService,
 });

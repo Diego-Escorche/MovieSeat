@@ -4,16 +4,19 @@ import {
   validatePartialReservation,
 } from '../schemas/reservationSchema.js';
 import { asyncHandler } from '../utils.js';
-import { ReservationModel } from '../services/reservation.js';
-import { MovieModel } from '../services/movie.js';
+import { ReservationService } from '../services/reservation.js';
+import { MovieService } from '../services/movie.js';
 
 export class ReservationController {
-  private reservationModel: ReservationModel;
-  private movieModel: MovieModel;
+  private reservationService: ReservationService;
+  private movieService: MovieService;
 
-  constructor(reservationModel: ReservationModel, movieModel: MovieModel) {
-    this.reservationModel = reservationModel;
-    this.movieModel = movieModel;
+  constructor(
+    reservationService: ReservationService,
+    movieService: MovieService,
+  ) {
+    this.reservationService = reservationService;
+    this.movieService = movieService;
   }
 
   getAll = asyncHandler(async (req: Request, res: Response) => {
@@ -22,7 +25,7 @@ export class ReservationController {
 
     if (date) query.createdAt = date;
 
-    const reservations = await this.reservationModel.getReservations(query);
+    const reservations = await this.reservationService.getReservations(query);
     return res.json(reservations);
   });
 
@@ -40,7 +43,7 @@ export class ReservationController {
       multiple: true,
     };
 
-    const reservations = await this.reservationModel.getReservations(query);
+    const reservations = await this.reservationService.getReservations(query);
     return res.json(reservations);
   });
 
@@ -54,7 +57,7 @@ export class ReservationController {
 
     const { movie, functionId, seats } = validation.data;
 
-    const reservedSeats = await this.movieModel.reserveSeat({
+    const reservedSeats = await this.movieService.reserveSeat({
       movieId: movie,
       functionId,
       seats,
@@ -64,7 +67,7 @@ export class ReservationController {
       return res.status(400).json({ message: 'Seats could not be reserved' });
     }
 
-    const newReservation = await this.reservationModel.create({
+    const newReservation = await this.reservationService.create({
       input: validation.data,
     });
 
@@ -101,7 +104,7 @@ export class ReservationController {
       return res.status(400).json({ message: 'Invalid ID format' });
     }
 
-    const deletedReservation = await this.reservationModel.cancelReservation({
+    const deletedReservation = await this.reservationService.cancelReservation({
       reservationId: id,
       functionId,
     });

@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import { ReservationController } from '../controllers/reservation.js';
 import { authenticate, authorize } from '../middlewares/auth/auth.js';
-import { ReservationModel } from '../services/reservation.js';
-import { UserModel } from '../services/user.js';
-import { MovieModel } from '../services/movie.js';
+import { ReservationService } from '../services/reservation.js';
+import { UserService } from '../services/user.js';
+import { MovieService } from '../services/movie.js';
 interface CreateReservationRouterProps {
-  reservationModel: ReservationModel;
-  userModel: UserModel;
-  movieModel: MovieModel;
+  reservationModel: ReservationService;
+  userModel: UserService;
+  movieModel: MovieService;
 }
 
 export const createReservationRouter = ({
@@ -26,20 +26,20 @@ export const createReservationRouter = ({
 
   reservationRouter.get(
     '/',
-    authenticate({ userModel }),
+    authenticate({ userService: userModel }),
     authorize('admin'),
     reservationController.getAll,
   );
 
   reservationRouter.get(
     '/:userId',
-    authenticate({ userModel }),
+    authenticate({ userService: userModel }),
     reservationController.getByUserId,
   );
 
   reservationRouter.post(
     '/',
-    authenticate({ userModel }),
+    authenticate({ userService: userModel }),
     reservationController.create,
   );
 
@@ -51,7 +51,7 @@ export const createReservationRouter = ({
 
   reservationRouter.delete(
     '/:id/:functionId',
-    authenticate({ userModel }),
+    authenticate({ userService: userModel }),
     reservationController.delete,
   );
 

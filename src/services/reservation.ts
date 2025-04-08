@@ -6,7 +6,7 @@ import { Document } from 'mongoose';
 
 type ReservationDoc = Document<unknown, {}, IReservation> & IReservation;
 
-export class ReservationModel {
+export class ReservationService {
   /**
    * Gets reservations based on optional date/user filters.
    */

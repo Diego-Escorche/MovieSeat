@@ -15,7 +15,7 @@ import {
   Seat,
 } from '../interfaces/movie.js';
 
-export class MovieModel {
+export class MovieService {
   async getAll({ genre }: { genre?: string }) {
     const query = genre
       ? {
