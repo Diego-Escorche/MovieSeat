@@ -53,11 +53,13 @@ export const authenticate = ({ userService }: AuthenticateParams) => {
  * Authorizes user access based on role.
  */
 export const authorize = (role: string) => {
-  return asyncHandler((req: Request, res: Response, next: NextFunction) => {
-    if (req.user?.role.includes(role)) {
-      next();
-    } else {
-      res.status(403).json({ message: 'Forbidden' });
-    }
-  });
+  return asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+      if (req.user?.role.includes(role)) {
+        next();
+      } else {
+        res.status(403).json({ message: 'Forbidden' });
+      }
+    },
+  );
 };

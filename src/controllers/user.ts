@@ -74,15 +74,7 @@ export class UserController {
       return res.status(400).json({ message: 'Error creating user' });
     }
 
-    // Reuse login handler with modified request
-    req.body = {
-      email: newUser.email,
-      username: newUser.username,
-      password: result.data.password,
-      role: newUser.role,
-    };
-
-    return this.login(req, res);
+    return res.status(201).json(newUser);
   });
 
   update = asyncHandler(async (req: Request, res: Response) => {
